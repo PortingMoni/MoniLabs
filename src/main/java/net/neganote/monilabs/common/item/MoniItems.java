@@ -3,8 +3,8 @@ package net.neganote.monilabs.common.item;
 import com.gregtechceu.gtceu.api.item.ComponentItem;
 import com.gregtechceu.gtceu.api.item.IComponentItem;
 import com.gregtechceu.gtceu.api.item.component.IItemComponent;
-import com.gregtechceu.gtceu.common.item.CoverPlaceBehavior;
-import com.gregtechceu.gtceu.common.item.TooltipBehavior;
+import com.gregtechceu.gtceu.common.item.behavior.CoverPlaceBehavior;
+import com.gregtechceu.gtceu.common.item.behavior.TooltipBehavior;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
