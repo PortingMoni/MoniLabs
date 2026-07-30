@@ -1,14 +1,11 @@
 package net.neganote.monilabs.common.machine.part;
 
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.part.TieredPartMachine;
 
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +14,8 @@ public class SensorHatchPartMachine extends TieredPartMachine {
 
     private final ConditionalSubscriptionHandler signalUpdateHandler;
 
-    public SensorHatchPartMachine(IMachineBlockEntity holder, int tier) {
-        super(holder, tier);
+    public SensorHatchPartMachine(BlockEntityCreationInfo info, int tier) {
+        super(info, tier);
         this.signalUpdateHandler = new ConditionalSubscriptionHandler(this, this::updateSignal, () -> true);
     }
 
@@ -27,19 +24,26 @@ public class SensorHatchPartMachine extends TieredPartMachine {
         return side == getFrontFacing();
     }
 
+    // Really gross but unfortunately not much we can do to force the redstone updates since it's pull-based it seems
+    public void updateSignal() {
+        if (!isRemote()) {
+            notifyBlockUpdate();
+        }
+    }
+
     @Override
-    public void removedFromController(@NotNull IMultiController controller) {
+    public void removedFromController(@NotNull MultiblockControllerMachine controller) {
         super.removedFromController(controller);
         signalUpdateHandler.updateSubscription();
     }
 
     @Override
-    public void addedToController(@NotNull IMultiController controller) {
-        super.addedToController(controller);
+    public void addedToController(@NotNull MultiblockControllerMachine controller, @NotNull String substructureName) {
+        super.addedToController(controller, substructureName);
         signalUpdateHandler.updateSubscription();
     }
 
-    public @Nullable IMultiController getController() {
+    public @Nullable MultiblockControllerMachine getController() {
         var controllers = getControllers().stream().toList();
         if (controllers.isEmpty() || !controllers.get(0).isFormed()) {
             return null;
@@ -49,12 +53,7 @@ public class SensorHatchPartMachine extends TieredPartMachine {
     }
 
     @Override
-    public boolean shouldOpenUI(Player player, InteractionHand hand, BlockHitResult hit) {
-        return false;
-    }
-
-    @Override
-    public boolean canShared() {
+    public boolean canShared(@NotNull MultiblockControllerMachine controller, @NotNull String substructureName) {
         return false;
     }
 }
