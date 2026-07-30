@@ -1,10 +1,11 @@
 package net.neganote.monilabs.client.render;
 
-import com.gregtechceu.gtceu.api.pattern.util.RelativeDirection;
+import com.gregtechceu.gtceu.api.multiblock.util.RelativeDirection;
 import com.gregtechceu.gtceu.client.renderer.block.FluidBlockRenderer;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
 import com.gregtechceu.gtceu.client.util.RenderUtil;
+import com.gregtechceu.gtceu.common.machine.trait.multiblock.MultiblockFluidRendererTrait;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -90,14 +91,16 @@ public class SculkVatRender extends DynamicRender<SculkVatMachine, SculkVatRende
 
         for (RelativeDirection face : this.drawFaces) {
             poseStack.pushPose();
-            var pose = poseStack.last().pose();
+            var pose = poseStack.last();
 
-            var dir = face.getRelative(sculkVat.self().getFrontFacing(), sculkVat.self().getUpwardsFacing(),
+            var dir = face.getRelativeFacing(sculkVat.self().getFrontFacing(), sculkVat.self().getUpwardsFacing(),
                     sculkVat.self().isFlipped());
             if (dir.getAxis() != Direction.Axis.Y) dir = dir.getOpposite();
 
-            fluidBlockRenderer.drawPlane(dir, sculkVat.getFluidOffsets(), pose, consumer, cachedFluid,
-                    RenderUtil.FluidTextureType.STILL, packedOverlay, sculkVat.self().getPos());
+            fluidBlockRenderer.drawPlane(dir, sculkVat.getTrait(MultiblockFluidRendererTrait.TYPE)
+                    .getFluidOffsets(), poseStack, consumer, cachedFluid,
+                    RenderUtil.FluidTextureType.STILL, packedOverlay, sculkVat.self().getBlockPos(),
+                    sculkVat.getLevel());
 
             poseStack.popPose();
         }
@@ -111,7 +114,7 @@ public class SculkVatRender extends DynamicRender<SculkVatMachine, SculkVatRende
     @Override
     public AABB getRenderBoundingBox(SculkVatMachine machine) {
         AABB box = super.getRenderBoundingBox(machine);
-        var offsets = machine.getFluidOffsets();
+        var offsets = machine.getTrait(MultiblockFluidRendererTrait.TYPE).getFluidOffsets();
         for (var offset : offsets) {
             box = box.minmax(new AABB(offset));
         }
@@ -120,6 +123,6 @@ public class SculkVatRender extends DynamicRender<SculkVatMachine, SculkVatRende
 
     @Override
     public boolean shouldRender(SculkVatMachine machine, Vec3 cameraPos) {
-        return machine.isFormed() && machine.getFluidOffsets() != null;
+        return machine.isFormed() && machine.getTrait(MultiblockFluidRendererTrait.TYPE).getFluidOffsets() != null;
     }
 }
