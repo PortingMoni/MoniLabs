@@ -2,7 +2,7 @@ package net.neganote.monilabs.client.render;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTValues;
-import com.gregtechceu.gtceu.api.pattern.util.RelativeDirection;
+import com.gregtechceu.gtceu.api.multiblock.util.RelativeDirection;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
 
@@ -64,11 +64,11 @@ public class MicroverseProjectorRender extends
         var frontFacing = projector.getFrontFacing();
         var upwardsFacing = projector.getUpwardsFacing();
 
-        Direction front = RelativeDirection.FRONT.getRelative(frontFacing, upwardsFacing, projector.isFlipped());
+        Direction front = RelativeDirection.FRONT.getRelativeFacing(frontFacing, upwardsFacing, projector.isFlipped());
 
-        Direction upwards = RelativeDirection.UP.getRelative(frontFacing, upwardsFacing, projector.isFlipped());
+        Direction upwards = RelativeDirection.UP.getRelativeFacing(frontFacing, upwardsFacing, projector.isFlipped());
 
-        Direction left = RelativeDirection.LEFT.getRelative(frontFacing, upwardsFacing, projector.isFlipped());
+        Direction left = RelativeDirection.LEFT.getRelativeFacing(frontFacing, upwardsFacing, projector.isFlipped());
 
         int tier = projector.getProjectorTier();
         Microverse microverse = projector.getMicroverse();
@@ -265,7 +265,7 @@ public class MicroverseProjectorRender extends
 
     @Override
     public @NotNull AABB getRenderBoundingBox(@NotNull MicroverseProjectorMachine machine) {
-        return new AABB(machine.getPos()).inflate(getViewDistance(), 16, getViewDistance());
+        return new AABB(machine.getBlockPos()).inflate(getViewDistance(), 16, getViewDistance());
     }
 
     @Override

@@ -68,7 +68,8 @@ public class HelicalFusionRenderer extends DynamicRender<FusionReactorMachine, H
         float time = (machine.getOffsetTimer() + partialTick) * 0.02f;
 
         Direction frontDir = machine.getFrontFacing();
-        Direction upDir = RelativeDirection.UP.getRelativeFacing(frontDir, machine.getUpwardsFacing(), machine.isFlipped());
+        Direction upDir = RelativeDirection.UP.getRelativeFacing(frontDir, machine.getUpwardsFacing(),
+                machine.isFlipped());
         Direction leftDir = RelativeDirection.LEFT.getRelativeFacing(frontDir, machine.getUpwardsFacing(),
                 machine.isFlipped());
 
