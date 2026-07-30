@@ -65,6 +65,7 @@ public class UniqueWorkableElectricMultiblockMachine extends WorkableElectricMul
     @Override
     public @NotNull List<IWidget> getWidgetsForDisplay(@NotNull PanelSyncManager syncManager) {
         BooleanSyncValue isDuplicate = new BooleanSyncValue(this::isDuplicate);
+        syncManager.syncValue("isDuplicate", isDuplicate);
         List<IWidget> widgets = new ArrayList<>();
         widgets.add(
                 Text.of(Component.translatable("monilabs.multiblock.duplicate.0")
