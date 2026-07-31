@@ -1,14 +1,17 @@
 package net.neganote.monilabs.capability.recipe;
 
-import com.gregtechceu.gtceu.api.registry.GTRegistries;
+import com.gregtechceu.gtceu.api.GTCEuAPI;
+import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
+
+import net.minecraft.resources.ResourceLocation;
 
 public class MoniRecipeCapabilities {
 
     public static final ChromaRecipeCapability CHROMA = ChromaRecipeCapability.CAP;
     public static final MicroverseRecipeCapability MICROVERSE = MicroverseRecipeCapability.CAP;
 
-    public static void init() {
-        GTRegistries.RECIPE_CAPABILITIES.register(CHROMA.name, CHROMA);
-        GTRegistries.RECIPE_CAPABILITIES.register(MICROVERSE.name, MICROVERSE);
+    public static void init(GTCEuAPI.RegisterEvent<ResourceLocation, RecipeCapability<?>> event) {
+        event.register(CHROMA.id, CHROMA);
+        event.register(MICROVERSE.id, MICROVERSE);
     }
 }
