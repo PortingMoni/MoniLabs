@@ -1,40 +1,34 @@
 package net.neganote.monilabs.common.machine.multiblock;
 
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
 
 import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
-import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
-import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.world.item.Item;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OmnicSynthesizerMachine extends WorkableElectricMultiblockMachine {
 
-    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            OmnicSynthesizerMachine.class, WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
-
-    @Persisted
+    @SaveField
     public List<Item> diversityList = new ArrayList<>();
 
-    @Persisted
+    @SaveField
     @DescSynced
     public int diversityPoints = 0;
 
-    @Persisted
+    @SaveField
     public boolean recipeModifierCalculated = false;
 
-    @Persisted
+    @SaveField
     public double recipeModifierAmount = 0.0;
 
-    public OmnicSynthesizerMachine(IMachineBlockEntity holder, Object... args) {
-        super(holder, args);
+    public OmnicSynthesizerMachine(BlockEntityCreationInfo info) {
+        super(info);
     }
 
     @Override
@@ -47,10 +41,5 @@ public class OmnicSynthesizerMachine extends WorkableElectricMultiblockMachine {
         super.afterWorking();
         recipeModifierCalculated = false;
         recipeModifierAmount = 0.0;
-    }
-
-    @Override
-    public @NotNull ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
     }
 }
