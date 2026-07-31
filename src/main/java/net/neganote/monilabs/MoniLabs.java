@@ -2,9 +2,10 @@ package net.neganote.monilabs;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
+import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
 import com.gregtechceu.gtceu.api.cover.CoverDefinition;
+import com.gregtechceu.gtceu.api.data.chemical.Element;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
-import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialRegistryEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
@@ -20,7 +21,6 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -35,13 +35,16 @@ import net.minecraftforge.registries.RegisterEvent;
 import net.neganote.monilabs.capability.recipe.ChromaIngredient;
 import net.neganote.monilabs.capability.recipe.MapColorIngredient;
 import net.neganote.monilabs.capability.recipe.MapMicroverseIngredient;
+import net.neganote.monilabs.capability.recipe.MoniRecipeCapabilities;
 import net.neganote.monilabs.client.render.*;
 import net.neganote.monilabs.client.render.effects.MoniTrails;
 import net.neganote.monilabs.client.render.effects.ParticleTypes;
 import net.neganote.monilabs.client.render.effects.PrismFX;
 import net.neganote.monilabs.common.block.MoniBlocks;
+import net.neganote.monilabs.common.cover.MoniCovers;
 import net.neganote.monilabs.common.data.MoniPlaceholders;
 import net.neganote.monilabs.common.data.MoniSounds;
+import net.neganote.monilabs.common.data.materials.MoniElements;
 import net.neganote.monilabs.common.data.materials.MoniMaterials;
 import net.neganote.monilabs.common.item.MoniItems;
 import net.neganote.monilabs.common.machine.MoniMachines;
@@ -50,6 +53,7 @@ import net.neganote.monilabs.config.MoniConfig;
 import net.neganote.monilabs.data.MoniDataGen;
 import net.neganote.monilabs.gtbridge.MoniRecipeTypes;
 import net.neganote.monilabs.integration.fancymenu.ActionRegister;
+import net.neganote.monilabs.integration.kjs.recipe.MoniRecipeComponents;
 import net.neganote.monilabs.utils.CalendarUtil;
 
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -93,14 +97,12 @@ public class MoniLabs {
         if (GTCEu.isClientSide()) {
             initializeDynamicRenders();
             modEventBus.register(MoniShaders.class);
-            modEventBus.addListener(this::registerAdditionalModels);
             if (!GTCEu.isDataGen()) {
                 ActionRegister.init();
             }
             MoniTrails.init();
         }
 
-        modEventBus.addListener(this::addMaterialRegistries);
         modEventBus.addListener(this::addMaterials);
         modEventBus.addListener(this::modifyMaterials);
         modEventBus.addGenericListener(SoundEntry.class, this::registerSounds);
@@ -127,12 +129,12 @@ public class MoniLabs {
                 event.registerSpriteSet(ParticleTypes.CHROMA_SET, PrismFX.SetColor::new);
             });
         }
-        modEventBus
-                .addGenericListener(GTRecipeType.class, this::registerRecipeTypes);
-
-        modEventBus
-                .addGenericListener(MachineDefinition.class, this::registerMachines);
+        modEventBus.addGenericListener(GTRecipeType.class, this::registerRecipeTypes);
+        modEventBus.addGenericListener(MachineDefinition.class, this::registerMachines);
         modEventBus.addGenericListener(CoverDefinition.class, this::registerCovers);
+        modEventBus.addGenericListener(Element.class, this::registerElements);
+        modEventBus.addGenericListener(RecipeCapability.class, this::registerRecipeCapabilities);
+        modEventBus.addListener(MoniRecipeComponents::registerRecipeKeys);
         modEventBus.addListener(this::onRegisterReloadListeners);
         // Most other events are fired on Forge's bus.
         // If we want to use annotations to register event listeners,
@@ -144,7 +146,6 @@ public class MoniLabs {
 
     public static void init() {
         MoniConfig.init();
-        REGISTRATE.registerRegistrate();
         MoniBlocks.init();
         MoniItems.init();
         MoniDataGen.init();
@@ -185,12 +186,6 @@ public class MoniLabs {
                 .register(MoniLabs.id("helical_fusion"), HelicalFusionRenderer.TYPE);
     }
 
-    // You MUST have this for custom materials.
-    // Remember to register them not to GT's namespace, but your own.
-    private void addMaterialRegistries(MaterialRegistryEvent event) {
-        GTCEuAPI.materialManager.createRegistry(MoniLabs.MOD_ID);
-    }
-
     // As well as this.
     private void addMaterials(MaterialEvent event) {
         MoniMaterials.register();
@@ -221,8 +216,17 @@ public class MoniLabs {
         return ResourceLocation.fromNamespaceAndPath("kubejs", path);
     }
 
-    private void registerCovers(
-                                GTCEuAPI.RegisterEvent<ResourceLocation, CoverDefinition> event) {}
+    private void registerCovers(GTCEuAPI.RegisterEvent<ResourceLocation, CoverDefinition> event) {
+        MoniCovers.init(event);
+    }
+
+    private void registerElements(GTCEuAPI.RegisterEvent<ResourceLocation, Element> event) {
+        MoniElements.init();
+    }
+
+    private void registerRecipeCapabilities(GTCEuAPI.RegisterEvent<ResourceLocation, RecipeCapability<?>> event) {
+        MoniRecipeCapabilities.init(event);
+    }
 
     private void onRegisterReloadListeners(RegisterClientReloadListenersEvent event) {
         event.registerReloadListener(new SimplePreparableReloadListener<Object>() {
@@ -237,9 +241,5 @@ public class MoniLabs {
                 BlackHoleRenderer.updateTextures();
             }
         });
-    }
-
-    public void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
-        event.register(CreativeEnergyRender.SPHERE);
     }
 }

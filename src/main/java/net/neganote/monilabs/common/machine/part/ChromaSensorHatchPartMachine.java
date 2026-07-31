@@ -1,8 +1,8 @@
 package net.neganote.monilabs.common.machine.part;
 
 import com.gregtechceu.gtceu.api.GTValues;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 
 import net.minecraft.core.Direction;
 import net.neganote.monilabs.common.machine.multiblock.Color;
@@ -15,13 +15,13 @@ import java.util.Objects;
 
 public class ChromaSensorHatchPartMachine extends SensorHatchPartMachine {
 
-    public ChromaSensorHatchPartMachine(IMachineBlockEntity holder) {
-        super(holder, GTValues.UHV);
+    public ChromaSensorHatchPartMachine(BlockEntityCreationInfo info) {
+        super(info, GTValues.UHV);
     }
 
     @Override
-    public void addedToController(@NotNull IMultiController controller) {
-        super.addedToController(controller);
+    public void addedToController(@NotNull MultiblockControllerMachine controller, @NotNull String substructureName) {
+        super.addedToController(controller, substructureName);
         if (controller instanceof PrismaticCrucibleMachine pcm) {
             setRenderColor(RenderColor.values()[pcm.getColorState().key + 1]);
         }
@@ -61,7 +61,7 @@ public class ChromaSensorHatchPartMachine extends SensorHatchPartMachine {
     }
 
     @Override
-    public void removedFromController(@NotNull IMultiController controller) {
+    public void removedFromController(@NotNull MultiblockControllerMachine controller) {
         super.removedFromController(controller);
         setRenderColor(RenderColor.NONE);
     }

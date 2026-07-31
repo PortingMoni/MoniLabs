@@ -52,8 +52,8 @@ public class UniqueWorkableElectricMultiblockMachine extends WorkableElectricMul
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(@NotNull String name) {
+        super.invalidateStructure(name);
         if (getLevel() instanceof ServerLevel serverLevel) {
             var owner = getOwnerUUID();
             var uniqueMultiblockMapping = UniqueMultiblockSavedData.getOrCreate(serverLevel);

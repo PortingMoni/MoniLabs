@@ -1,23 +1,25 @@
 package net.neganote.monilabs.common.machine.part;
 
-import com.gregtechceu.gtceu.api.gui.GuiTextures;
-import com.gregtechceu.gtceu.api.gui.widget.IntInputWidget;
-import com.gregtechceu.gtceu.api.gui.widget.ToggleButtonWidget;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
+import com.gregtechceu.gtceu.api.machine.feature.IMuiMachine;
+import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
-import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
-import com.lowdragmc.lowdraglib.gui.widget.Widget;
-import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
-import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.BlockHitResult;
 import net.neganote.monilabs.common.machine.multiblock.MicroverseProjectorMachine;
 
+import brachy.modularui.api.drawable.Text;
+import brachy.modularui.factory.PosGuiData;
+import brachy.modularui.screen.UISettings;
+import brachy.modularui.value.sync.BooleanSyncValue;
+import brachy.modularui.value.sync.IntSyncValue;
+import brachy.modularui.value.sync.PanelSyncManager;
+import brachy.modularui.widget.ParentWidget;
+import brachy.modularui.widgets.ToggleButton;
+import brachy.modularui.widgets.layout.Flow;
+import brachy.modularui.widgets.textfield.TextFieldWidget;
 import com.mojang.blaze3d.MethodsReturnNonnullByDefault;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +29,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class AdvancedMicroverseStabilitySensorHatchPartMachine extends MicroverseStabilitySensorHatchPartMachine {
+public class AdvancedMicroverseStabilitySensorHatchPartMachine extends MicroverseStabilitySensorHatchPartMachine
+                                                               implements IMuiMachine {
 
     public static int DEFAULT_MIN_PERCENT = 33;
     public static int DEFAULT_MAX_PERCENT = 66;
@@ -42,19 +45,10 @@ public class AdvancedMicroverseStabilitySensorHatchPartMachine extends Microvers
     @Getter
     public boolean inverted;
 
-    public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            AdvancedMicroverseStabilitySensorHatchPartMachine.class,
-            MicroverseStabilitySensorHatchPartMachine.MANAGED_FIELD_HOLDER);
-
-    public AdvancedMicroverseStabilitySensorHatchPartMachine(IMachineBlockEntity holder) {
-        super(holder);
+    public AdvancedMicroverseStabilitySensorHatchPartMachine(BlockEntityCreationInfo info) {
+        super(info);
         minPercent = DEFAULT_MIN_PERCENT;
         maxPercent = DEFAULT_MAX_PERCENT;
-    }
-
-    @Override
-    public boolean shouldOpenUI(Player player, InteractionHand hand, BlockHitResult hit) {
-        return true;
     }
 
     @Override
@@ -89,32 +83,28 @@ public class AdvancedMicroverseStabilitySensorHatchPartMachine extends Microvers
     }
 
     @Override
-    public Widget createUIWidget() {
-        WidgetGroup group = new WidgetGroup(0, 0, 170, 85);
-
-        group.addWidget(new ToggleButtonWidget(
-                10, 5, 18, 18,
-                GuiTextures.INVERT_REDSTONE_BUTTON, this::isInverted, this::setInverted)
-                .isMultiLang()
-                .setTooltipText("gui.monilabs.microverse_stability_sensor.invert"));
-
-        group.addWidget(new LabelWidget(10, 35, "gui.monilabs.microverse_stability.min"));
-        group.addWidget(new IntInputWidget(45, 30, 100, 20,
-                () -> minPercent,
-                val -> minPercent = Mth.clamp(val, 0, 100))
-                .setHoverTooltips("gui.monilabs.microverse_stability.min_threshold"));
-
-        group.addWidget(new LabelWidget(10, 60, "gui.monilabs.microverse_stability.max"));
-        group.addWidget(new IntInputWidget(45, 55, 100, 20,
-                () -> maxPercent,
-                val -> maxPercent = Mth.clamp(val, 0, 100))
-                .setHoverTooltips("gui.monilabs.microverse_stability.max_threshold"));
-
-        return group;
-    }
-
-    @Override
-    public ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
+    public void buildMainUI(ParentWidget<?> mainWidget, PosGuiData guiData, PanelSyncManager syncManager,
+                            UISettings settings) {
+        Flow column = Flow.column()
+                .child(new ToggleButton()
+                        .value(new BooleanSyncValue(this::isInverted, this::setInverted).allowC2S())
+                        .overlay(false, GTGuiTextures.OVERLAY_REDSTONE_OFF)
+                        .overlay(true, GTGuiTextures.OVERLAY_REDSTONE_ON)
+                        .tooltip(t -> t.add("gui.monilabs.microverse_stability_sensor.invert")))
+                .child(Flow.row()
+                        .child(Text.lang("gui.monilabs.microverse_stability.min").asWidget())
+                        .child(new TextFieldWidget()
+                                .setNumbers(0, 100)
+                                .value(new IntSyncValue(() -> minPercent,
+                                        val -> minPercent = Mth.clamp(minPercent, 0, 100)).allowC2S())
+                                .tooltip(t -> t.add("gui.monilabs.microverse_stability.min_threshold"))))
+                .child(Flow.row()
+                        .child(Text.lang("gui.monilabs.microverse_stability.max").asWidget())
+                        .child(new TextFieldWidget()
+                                .setNumbers(0, 100)
+                                .value(new IntSyncValue(() -> maxPercent,
+                                        val -> maxPercent = Mth.clamp(maxPercent, 0, 100)).allowC2S())
+                                .tooltip(t -> t.add("gui.monilabs.microverse_stability.max_threshold"))));
+        mainWidget.child(column);
     }
 }

@@ -1,17 +1,17 @@
 package net.neganote.monilabs.mixin;
 
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IRotorHolderMachine;
+import com.gregtechceu.gtceu.common.machine.multiblock.part.RotorHolderPartMachine;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@Mixin(value = IRotorHolderMachine.class, remap = false)
-public interface RotorHolderMachineMixin {
+@Mixin(value = RotorHolderPartMachine.class, remap = false)
+public class RotorHolderMachineMixin {
 
     /**
      * @author NegaNote
-     * @reason killing rotor damage, can't use an injection on an interface
+     * @reason killing rotor damage
      */
     @Overwrite
-    default void damageRotor(int damageAmount) {}
+    public void damageRotor(int damageAmount) {}
 }

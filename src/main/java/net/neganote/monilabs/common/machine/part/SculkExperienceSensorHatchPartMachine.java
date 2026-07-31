@@ -1,8 +1,8 @@
 package net.neganote.monilabs.common.machine.part;
 
 import com.gregtechceu.gtceu.api.GTValues;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -16,8 +16,8 @@ import java.util.Objects;
 
 public class SculkExperienceSensorHatchPartMachine extends SensorHatchPartMachine {
 
-    public SculkExperienceSensorHatchPartMachine(IMachineBlockEntity holder) {
-        super(holder, GTValues.ZPM);
+    public SculkExperienceSensorHatchPartMachine(BlockEntityCreationInfo info) {
+        super(info, GTValues.ZPM);
     }
 
     @Override
@@ -62,8 +62,8 @@ public class SculkExperienceSensorHatchPartMachine extends SensorHatchPartMachin
     }
 
     @Override
-    public void addedToController(@NotNull IMultiController controller) {
-        super.addedToController(controller);
+    public void addedToController(@NotNull MultiblockControllerMachine controller, @NotNull String substructureName) {
+        super.addedToController(controller, substructureName);
         if (controller instanceof SculkVatMachine sculkVat) {
             int value = Mth.clamp(
                     (int) (16 * sculkVat.getXpBuffer() / ((float) (FluidType.BUCKET_VOLUME << GTValues.ZPM))), 0, 15);
@@ -72,7 +72,7 @@ public class SculkExperienceSensorHatchPartMachine extends SensorHatchPartMachin
     }
 
     @Override
-    public void removedFromController(@NotNull IMultiController controller) {
+    public void removedFromController(@NotNull MultiblockControllerMachine controller) {
         super.removedFromController(controller);
         setRenderFillLevel(FillLevel.EMPTY_TO_QUARTER);
     }

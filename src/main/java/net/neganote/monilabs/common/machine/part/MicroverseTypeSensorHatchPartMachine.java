@@ -1,8 +1,8 @@
 package net.neganote.monilabs.common.machine.part;
 
 import com.gregtechceu.gtceu.api.GTValues;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 
 import net.minecraft.core.Direction;
 import net.neganote.monilabs.common.machine.multiblock.Microverse;
@@ -17,8 +17,8 @@ import java.util.Objects;
 
 public class MicroverseTypeSensorHatchPartMachine extends SensorHatchPartMachine {
 
-    public MicroverseTypeSensorHatchPartMachine(IMachineBlockEntity holder) {
-        super(holder, GTValues.HV);
+    public MicroverseTypeSensorHatchPartMachine(BlockEntityCreationInfo info) {
+        super(info, GTValues.HV);
     }
 
     public static Object2IntMap<Microverse> SIGNAL_MAP;
@@ -62,15 +62,15 @@ public class MicroverseTypeSensorHatchPartMachine extends SensorHatchPartMachine
     }
 
     @Override
-    public void addedToController(@NotNull IMultiController controller) {
-        super.addedToController(controller);
+    public void addedToController(@NotNull MultiblockControllerMachine controller, @NotNull String substructureName) {
+        super.addedToController(controller, substructureName);
         if (controller instanceof MicroverseProjectorMachine projector) {
             setRenderMicroverse(projector.getMicroverse());
         }
     }
 
     @Override
-    public void removedFromController(@NotNull IMultiController controller) {
+    public void removedFromController(@NotNull MultiblockControllerMachine controller) {
         super.removedFromController(controller);
         setRenderMicroverse(Microverse.NONE);
     }

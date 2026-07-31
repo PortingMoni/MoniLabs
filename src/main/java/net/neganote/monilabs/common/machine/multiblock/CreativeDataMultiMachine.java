@@ -1,9 +1,7 @@
 package net.neganote.monilabs.common.machine.multiblock;
 
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-
-import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.server.level.ServerLevel;
 import net.neganote.monilabs.saveddata.CreativeDataAccessSavedData;
@@ -15,21 +13,18 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public class CreativeDataMultiMachine extends UniqueWorkableElectricMultiblockMachine {
 
-    public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(CreativeDataMultiMachine.class,
-            UniqueWorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
-
     private final ConditionalSubscriptionHandler creativeDataSubscription;
 
-    public CreativeDataMultiMachine(IMachineBlockEntity holder, Object... args) {
-        super(holder, args);
+    public CreativeDataMultiMachine(BlockEntityCreationInfo info) {
+        super(info);
 
         this.creativeDataSubscription = new ConditionalSubscriptionHandler(this, this::tickEnableCreativeData,
                 this::isSubscriptionActive);
     }
 
     @Override
-    public void onStructureFormed() {
-        super.onStructureFormed();
+    public void formStructure(@NotNull String substructureName) {
+        super.formStructure(substructureName);
         creativeDataSubscription.updateSubscription();
     }
 
@@ -68,14 +63,9 @@ public class CreativeDataMultiMachine extends UniqueWorkableElectricMultiblockMa
     }
 
     @Override
-    public void onStructureInvalid() {
-        super.onStructureInvalid();
+    public void invalidateStructure(@NotNull String name) {
+        super.invalidateStructure(name);
         enableCreativeData(false);
         creativeDataSubscription.unsubscribe();
-    }
-
-    @Override
-    public @NotNull ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
     }
 }

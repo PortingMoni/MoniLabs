@@ -1,11 +1,8 @@
 package net.neganote.monilabs.integration.jade.provider;
 
-import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neganote.monilabs.MoniLabs;
 import net.neganote.monilabs.common.machine.multiblock.PrismaticCrucibleMachine;
 
@@ -19,9 +16,7 @@ public class PrismaticColorBlockProvider implements IBlockComponentProvider, ISe
 
     @Override
     public void appendTooltip(ITooltip iTooltip, BlockAccessor blockAccessor, IPluginConfig iPluginConfig) {
-        BlockEntity be = blockAccessor.getBlockEntity();
-        if (be instanceof MetaMachineBlockEntity meta_machine_be &&
-                meta_machine_be.getMetaMachine() instanceof PrismaticCrucibleMachine) {
+        if (blockAccessor.getBlockEntity() instanceof PrismaticCrucibleMachine) {
             CompoundTag data = blockAccessor.getServerData();
             if (data.contains("currentColor")) {
                 var colorKey = data.getString("currentColor");
@@ -38,8 +33,7 @@ public class PrismaticColorBlockProvider implements IBlockComponentProvider, ISe
 
     @Override
     public void appendServerData(CompoundTag compoundTag, BlockAccessor blockAccessor) {
-        if (blockAccessor.getBlockEntity() instanceof MetaMachineBlockEntity meta_machine_be &&
-                meta_machine_be.getMetaMachine() instanceof PrismaticCrucibleMachine machine) {
+        if (blockAccessor.getBlockEntity() instanceof PrismaticCrucibleMachine machine) {
             compoundTag.putString("currentColor", machine.getColorState().nameKey);
         }
     }

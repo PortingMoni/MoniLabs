@@ -1,6 +1,7 @@
 package net.neganote.monilabs.common.cover;
 
 import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.cover.CoverDefinition;
 import com.gregtechceu.gtceu.client.renderer.cover.IOCoverRenderer;
@@ -9,6 +10,7 @@ import com.gregtechceu.gtceu.common.cover.FluidRegulatorCover;
 import com.gregtechceu.gtceu.common.cover.PumpCover;
 import com.gregtechceu.gtceu.common.cover.RobotArmCover;
 
+import net.minecraft.resources.ResourceLocation;
 import net.neganote.monilabs.MoniLabs;
 
 public class MoniCovers {
@@ -39,5 +41,10 @@ public class MoniCovers {
                     1280 * 64 * 64 * 4 / 20),
             () -> () -> IOCoverRenderer.PUMP_LIKE_COVER_RENDERER);
 
-    public static void init() {}
+    public static void init(GTCEuAPI.RegisterEvent<ResourceLocation, CoverDefinition> event) {
+        event.register(MAX_CONVEYOR_MODULE.getId(), MAX_CONVEYOR_MODULE);
+        event.register(MAX_ROBOT_ARM.getId(), MAX_ROBOT_ARM);
+        event.register(MAX_ELECTRIC_PUMP.getId(), MAX_ELECTRIC_PUMP);
+        event.register(MAX_FLUID_REGULATOR.getId(), MAX_FLUID_REGULATOR);
+    }
 }

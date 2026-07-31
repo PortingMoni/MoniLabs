@@ -2,7 +2,7 @@ package net.neganote.monilabs.mixin;
 
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.item.component.IMaterialPartItem;
-import com.gregtechceu.gtceu.common.item.TurbineRotorBehaviour;
+import com.gregtechceu.gtceu.common.item.behavior.TurbineRotorBehaviour;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
