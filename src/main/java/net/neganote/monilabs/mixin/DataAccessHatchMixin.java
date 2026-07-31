@@ -1,6 +1,6 @@
 package net.neganote.monilabs.mixin;
 
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.DataAccessHatchMachine;
 
@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = DataAccessHatchMachine.class, remap = false)
 public class DataAccessHatchMixin extends MetaMachine {
 
-    public DataAccessHatchMixin(IMachineBlockEntity holder) {
-        super(holder);
+    public DataAccessHatchMixin(BlockEntityCreationInfo info) {
+        super(info);
     }
 
     @Inject(method = "isCreative", at = @At(value = "HEAD"), cancellable = true)
