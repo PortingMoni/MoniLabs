@@ -1,7 +1,5 @@
 package net.neganote.monilabs.integration.jade.provider;
 
-import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,8 +20,7 @@ public class SculkVatXPProvider implements IBlockComponentProvider, IServerDataP
     @Override
     public void appendTooltip(ITooltip iTooltip, BlockAccessor blockAccessor, IPluginConfig iPluginConfig) {
         BlockEntity be = blockAccessor.getBlockEntity();
-        if (be instanceof MetaMachineBlockEntity meta_machine_be &&
-                meta_machine_be.getMetaMachine() instanceof SculkVatMachine) {
+        if (be instanceof SculkVatMachine) {
             CompoundTag data = blockAccessor.getServerData();
             if (data.contains("currentXPAmount")) {
                 var xpBuffer = data.getInt("currentXPAmount");
@@ -34,8 +31,7 @@ public class SculkVatXPProvider implements IBlockComponentProvider, IServerDataP
 
     @Override
     public void appendServerData(CompoundTag compoundTag, BlockAccessor blockAccessor) {
-        if (blockAccessor.getBlockEntity() instanceof MetaMachineBlockEntity meta_machine_be &&
-                meta_machine_be.getMetaMachine() instanceof SculkVatMachine vat) {
+        if (blockAccessor.getBlockEntity() instanceof SculkVatMachine vat) {
             compoundTag.putInt("currentXPAmount", vat.getXpBuffer());
         }
     }

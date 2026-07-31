@@ -1,6 +1,6 @@
 package net.neganote.monilabs.mixin;
 
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.PowerSubstationMachine;
 
@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = PowerSubstationMachine.class, remap = false)
 public class PowerSubstationMachineMixin extends MetaMachine {
 
-    public PowerSubstationMachineMixin(IMachineBlockEntity holder) {
-        super(holder);
+    public PowerSubstationMachineMixin(BlockEntityCreationInfo info) {
+        super(info);
     }
 
     // Prevents substations from performing any power transfers while TES is running
