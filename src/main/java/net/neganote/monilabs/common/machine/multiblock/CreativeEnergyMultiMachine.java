@@ -1,11 +1,13 @@
 package net.neganote.monilabs.common.machine.multiblock;
 
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.common.machine.owner.MachineOwner;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.server.ServerLifecycleHooks;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +28,8 @@ public class CreativeEnergyMultiMachine extends UniqueWorkableElectricMultiblock
 
     private boolean currentlyActive = false;
 
-    public CreativeEnergyMultiMachine(IMachineBlockEntity holder, Object... args) {
-        super(holder, args);
+    public CreativeEnergyMultiMachine(BlockEntityCreationInfo info) {
+        super(info);
 
         this.creativeEnergySubscription = new ConditionalSubscriptionHandler(this, this::tickEnableCreativeEnergy,
                 this::isSubscriptionActive);
@@ -60,8 +62,8 @@ public class CreativeEnergyMultiMachine extends UniqueWorkableElectricMultiblock
     }
 
     @Override
-    public void onStructureFormed() {
-        super.onStructureFormed();
+    public void formStructure(@NotNull String substructureName) {
+        super.formStructure(substructureName);
         enableCreativeEnergy(recipeLogic.isWorking());
         creativeEnergySubscription.updateSubscription();
     }
@@ -108,8 +110,8 @@ public class CreativeEnergyMultiMachine extends UniqueWorkableElectricMultiblock
     }
 
     @Override
-    public void onStructureInvalid() {
-        super.onStructureInvalid();
+    public void invalidateStructure(@NotNull String name) {
+        super.invalidateStructure(name);
         enableCreativeEnergy(false);
         creativeEnergySubscription.unsubscribe();
     }
