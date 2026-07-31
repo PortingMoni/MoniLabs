@@ -96,13 +96,15 @@ public class AdvancedMicroverseStabilitySensorHatchPartMachine extends Microvers
                         .child(new TextFieldWidget()
                                 .setNumbers(0, 100)
                                 .value(new IntSyncValue(() -> minPercent,
-                                        val -> minPercent = Mth.clamp(minPercent, 0, 100)))))
+                                        val -> minPercent = Mth.clamp(minPercent, 0, 100)).allowC2S())
+                                .tooltip(t -> t.add("gui.monilabs.microverse_stability.min_threshold"))))
                 .child(Flow.row()
                         .child(Text.lang("gui.monilabs.microverse_stability.max").asWidget())
                         .child(new TextFieldWidget()
                                 .setNumbers(0, 100)
                                 .value(new IntSyncValue(() -> maxPercent,
-                                        val -> maxPercent = Mth.clamp(maxPercent, 0, 100)))));
+                                        val -> maxPercent = Mth.clamp(maxPercent, 0, 100)).allowC2S())
+                                .tooltip(t -> t.add("gui.monilabs.microverse_stability.max_threshold"))));
         mainWidget.child(column);
     }
 }
