@@ -1,7 +1,7 @@
 package net.neganote.monilabs.common.machine.multiblock;
 
+import com.gregtechceu.gtceu.api.machin.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 

@@ -1,8 +1,8 @@
 package net.neganote.monilabs.common.machine.part;
 
 import com.gregtechceu.gtceu.api.GTValues;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -15,8 +15,8 @@ import java.util.Objects;
 
 public class MicroverseStabilitySensorHatchPartMachine extends SensorHatchPartMachine {
 
-    public MicroverseStabilitySensorHatchPartMachine(IMachineBlockEntity holder) {
-        super(holder, GTValues.HV);
+    public MicroverseStabilitySensorHatchPartMachine(BlockEntityCreationInfo info) {
+        super(info, GTValues.HV);
     }
 
     @Override
@@ -59,8 +59,8 @@ public class MicroverseStabilitySensorHatchPartMachine extends SensorHatchPartMa
     }
 
     @Override
-    public void addedToController(@NotNull IMultiController controller) {
-        super.addedToController(controller);
+    public void addedToController(@NotNull MultiblockControllerMachine controller, @NotNull String substructureName) {
+        super.addedToController(controller, substructureName);
         if (controller instanceof MicroverseProjectorMachine projector) {
             int value = (int) (16 * projector.getMicroverseIntegrity() /
                     ((float) MicroverseProjectorMachine.MICROVERSE_MAX_INTEGRITY));
@@ -70,7 +70,7 @@ public class MicroverseStabilitySensorHatchPartMachine extends SensorHatchPartMa
     }
 
     @Override
-    public void removedFromController(@NotNull IMultiController controller) {
+    public void removedFromController(@NotNull MultiblockControllerMachine controller) {
         super.removedFromController(controller);
         setRenderFillLevel(FillLevel.EMPTY_TO_QUARTER);
     }
