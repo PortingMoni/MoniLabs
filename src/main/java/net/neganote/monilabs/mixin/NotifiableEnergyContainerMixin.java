@@ -4,12 +4,12 @@ import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableEnergyContainer;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableRecipeHandlerTrait;
+import com.gregtechceu.gtceu.api.machine.trait.MachineTrait;
+import com.gregtechceu.gtceu.api.machine.trait.MachineTraitType;
+import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableEnergyContainer;
+import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableRecipeHandlerTrait;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.ingredient.EnergyStack;
-
-import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.server.level.ServerLevel;
 import net.neganote.monilabs.common.machine.multiblock.CreativeEnergyMultiMachine;
@@ -31,8 +31,8 @@ public class NotifiableEnergyContainerMixin extends NotifiableRecipeHandlerTrait
     @Shadow
     protected @Nullable TickableSubscription outputSubs;
 
-    public NotifiableEnergyContainerMixin(MetaMachine machine) {
-        super(machine);
+    public NotifiableEnergyContainerMixin() {
+        super();
     }
 
     @Shadow
@@ -46,6 +46,11 @@ public class NotifiableEnergyContainerMixin extends NotifiableRecipeHandlerTrait
     @Override
     public MetaMachine getMachine() {
         return super.getMachine();
+    }
+
+    @Override
+    public MachineTraitType<? extends MachineTrait> getTraitType() {
+        return NotifiableEnergyContainer.TYPE;
     }
 
     @Inject(method = "getEnergyStored()J", at = @At(value = "HEAD"), cancellable = true)
@@ -75,11 +80,6 @@ public class NotifiableEnergyContainerMixin extends NotifiableRecipeHandlerTrait
                 cir.setReturnValue(energyToAdd);
             }
         }
-    }
-
-    @Override
-    public ManagedFieldHolder getFieldHolder() {
-        return NotifiableEnergyContainer.MANAGED_FIELD_HOLDER;
     }
 
     @Override
