@@ -1,7 +1,5 @@
 package net.neganote.monilabs.integration.jade.provider;
 
-import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,8 +17,7 @@ public class MicroverseInfoBlockProvider implements IBlockComponentProvider, ISe
 
     @Override
     public void appendTooltip(ITooltip iTooltip, BlockAccessor blockAccessor, IPluginConfig iPluginConfig) {
-        if (blockAccessor.getBlockEntity() instanceof MetaMachineBlockEntity meta_machine_be &&
-                meta_machine_be.getMetaMachine() instanceof MicroverseProjectorMachine) {
+        if (blockAccessor.getBlockEntity() instanceof MicroverseProjectorMachine) {
             CompoundTag data = blockAccessor.getServerData();
             if (data.contains("currentMicroverse")) {
                 int currentMicroverse = data.getInt("currentMicroverse");
@@ -37,8 +34,7 @@ public class MicroverseInfoBlockProvider implements IBlockComponentProvider, ISe
 
     @Override
     public void appendServerData(CompoundTag compoundTag, BlockAccessor blockAccessor) {
-        if (blockAccessor.getBlockEntity() instanceof MetaMachineBlockEntity meta_machine_be &&
-                meta_machine_be.getMetaMachine() instanceof MicroverseProjectorMachine machine && machine.isFormed()) {
+        if (blockAccessor.getBlockEntity() instanceof MicroverseProjectorMachine machine && machine.isFormed()) {
             compoundTag.putInt("currentMicroverse", machine.getMicroverse().key);
             if (machine.getMicroverse() != Microverse.NONE) {
                 compoundTag.putInt("microverseIntegrity", machine.getMicroverseIntegrity());
