@@ -1,20 +1,17 @@
 package net.neganote.monilabs.common.machine.multiblock;
 
 import com.gregtechceu.gtceu.api.GTValues;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IFluidRenderMulti;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
-import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
-import com.gregtechceu.gtceu.api.pattern.util.RelativeDirection;
+import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableFluidTank;
+import com.gregtechceu.gtceu.api.machine.trait.recipe.RecipeLogic;
+import com.gregtechceu.gtceu.api.multiblock.util.RelativeDirection;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
-
-import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
-import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
-import com.lowdragmc.lowdraglib.syncdata.annotation.RequireRerender;
-import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
+import com.gregtechceu.gtceu.api.sync_system.annotations.RerenderOnChanged;
+import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
+import com.gregtechceu.gtceu.common.machine.trait.multiblock.MultiblockFluidRendererTrait;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,6 +20,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.neganote.monilabs.common.machine.part.SculkExperienceDrainingHatchPartMachine;
 
+import brachy.modularui.api.drawable.Text;
+import brachy.modularui.api.widget.IWidget;
+import brachy.modularui.value.sync.IntSyncValue;
+import brachy.modularui.value.sync.PanelSyncManager;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,36 +34,32 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SculkVatMachine extends WorkableElectricMultiblockMachine implements IFluidRenderMulti {
+public class SculkVatMachine extends WorkableElectricMultiblockMachine {
 
     private final ConditionalSubscriptionHandler xpHatchSubscription;
 
-    public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(SculkVatMachine.class,
-            WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
-
-    @Persisted
+    @SaveField
     @Getter
     private int xpBuffer = 0;
 
-    @Persisted
+    @SaveField
     @Getter
     private int timer = 0;
 
     @Getter
     @Setter
-    @DescSynced
-    @RequireRerender
+    @RerenderOnChanged
     private @NotNull Set<BlockPos> fluidBlockOffsets = new HashSet<>();
 
     @Getter
-    @Persisted
-    @DescSynced
+    @SaveField
     private GTRecipe lastSavedRecipe = null;
 
     public static int XP_BUFFER_MAX = FluidType.BUCKET_VOLUME << GTValues.ZPM;
 
-    public SculkVatMachine(IMachineBlockEntity holder, Object... args) {
-        super(holder, args);
+    public SculkVatMachine(BlockEntityCreationInfo info) {
+        super(info);
+        attachTrait(new MultiblockFluidRendererTrait(this::getOffsets));
         this.xpHatchSubscription = new ConditionalSubscriptionHandler(this, this::xpHatchTick, () -> true);
     }
 
@@ -96,30 +93,27 @@ public class SculkVatMachine extends WorkableElectricMultiblockMachine implement
     }
 
     @Override
-    public void onStructureFormed() {
-        super.onStructureFormed();
+    public void formStructure(@NotNull String substructureName) {
+        super.formStructure(substructureName);
         xpHatchSubscription.updateSubscription();
-        IFluidRenderMulti.super.onStructureFormed();
     }
 
     @Override
-    public void onStructureInvalid() {
-        super.onStructureInvalid();
+    public void invalidateStructure(String substructureName) {
+        super.invalidateStructure(substructureName);
         xpHatchSubscription.updateSubscription();
         timer = 0;
-        IFluidRenderMulti.super.onStructureInvalid();
         lastSavedRecipe = null;
     }
 
-    @Override
-    public @NotNull Set<BlockPos> saveOffsets() {
-        Direction up = RelativeDirection.UP.getRelative(getFrontFacing(), getUpwardsFacing(), isFlipped());
+    public @NotNull Set<BlockPos> getOffsets() {
+        Direction up = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
         Direction back = getFrontFacing().getOpposite();
-        Direction right = RelativeDirection.RIGHT.getRelative(getFrontFacing(), getUpwardsFacing(), isFlipped());
-        Direction left = RelativeDirection.LEFT.getRelative(getFrontFacing(), getUpwardsFacing(),
+        Direction right = RelativeDirection.RIGHT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        Direction left = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
                 isFlipped());
 
-        BlockPos pos = getPos();
+        BlockPos pos = getBlockPos();
 
         ObjectOpenHashSet<BlockPos> offsets = new ObjectOpenHashSet<>();
 
@@ -194,15 +188,12 @@ public class SculkVatMachine extends WorkableElectricMultiblockMachine implement
     }
 
     @Override
-    public void addDisplayText(@NotNull List<Component> textList) {
-        super.addDisplayText(textList);
-        if (isFormed()) {
-            textList.add(Component.translatable("sculk_vat.monilabs.current_xp_buffer", xpBuffer, XP_BUFFER_MAX));
-        }
-    }
-
-    @Override
-    public @NotNull ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
+    public List<IWidget> getWidgetsForDisplay(PanelSyncManager syncManager) {
+        IntSyncValue xpSyncValue = new IntSyncValue(this::getXpBuffer);
+        syncManager.syncValue("xpBuffer", xpSyncValue);
+        var list = super.getWidgetsForDisplay(syncManager);
+        list.add(Text.dynamic(() -> Component.translatable("sculk_vat.monilabs.current_xp_buffer",
+                xpSyncValue.getIntValue(), XP_BUFFER_MAX)).asWidget());
+        return list;
     }
 }

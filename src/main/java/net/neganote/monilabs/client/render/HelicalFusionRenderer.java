@@ -1,7 +1,7 @@
 package net.neganote.monilabs.client.render;
 
-import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
-import com.gregtechceu.gtceu.api.pattern.util.RelativeDirection;
+import com.gregtechceu.gtceu.api.machine.trait.recipe.RecipeLogic;
+import com.gregtechceu.gtceu.api.multiblock.util.RelativeDirection;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.FusionReactorMachine;
@@ -68,8 +68,9 @@ public class HelicalFusionRenderer extends DynamicRender<FusionReactorMachine, H
         float time = (machine.getOffsetTimer() + partialTick) * 0.02f;
 
         Direction frontDir = machine.getFrontFacing();
-        Direction upDir = RelativeDirection.UP.getRelative(frontDir, machine.getUpwardsFacing(), machine.isFlipped());
-        Direction leftDir = RelativeDirection.LEFT.getRelative(frontDir, machine.getUpwardsFacing(),
+        Direction upDir = RelativeDirection.UP.getRelativeFacing(frontDir, machine.getUpwardsFacing(),
+                machine.isFlipped());
+        Direction leftDir = RelativeDirection.LEFT.getRelativeFacing(frontDir, machine.getUpwardsFacing(),
                 machine.isFlipped());
 
         Vec3 vFront = Vec3.atLowerCornerOf(frontDir.getNormal());
@@ -77,7 +78,7 @@ public class HelicalFusionRenderer extends DynamicRender<FusionReactorMachine, H
         Vec3 vLeft = Vec3.atLowerCornerOf(leftDir.getNormal());
 
         Vec3 cam = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-        double distSq = cam.distanceToSqr(Vec3.atCenterOf(machine.getPos()));
+        double distSq = cam.distanceToSqr(Vec3.atCenterOf(machine.getBlockPos()));
         int segments = distSq < LOD_NEAR * LOD_NEAR ? 400 : (distSq < LOD_MID * LOD_MID ? 260 : 160);
         int crossSections = distSq < LOD_NEAR * LOD_NEAR ? 12 : 8;
 
@@ -218,6 +219,6 @@ public class HelicalFusionRenderer extends DynamicRender<FusionReactorMachine, H
 
     @Override
     public @NotNull AABB getRenderBoundingBox(FusionReactorMachine m) {
-        return new AABB(m.getPos()).inflate(60);
+        return new AABB(m.getBlockPos()).inflate(60);
     }
 }
