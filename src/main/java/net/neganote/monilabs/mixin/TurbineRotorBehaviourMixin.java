@@ -1,6 +1,6 @@
 package net.neganote.monilabs.mixin;
 
-import com.gregtechceu.gtceu.common.item.TurbineRotorBehaviour;
+import com.gregtechceu.gtceu.common.item.behavior.TurbineRotorBehaviour;
 
 import net.minecraft.world.item.ItemStack;
 
