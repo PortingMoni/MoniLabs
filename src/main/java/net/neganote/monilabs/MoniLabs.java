@@ -4,7 +4,6 @@ import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.cover.CoverDefinition;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
-import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialRegistryEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
@@ -20,7 +19,6 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -93,14 +91,12 @@ public class MoniLabs {
         if (GTCEu.isClientSide()) {
             initializeDynamicRenders();
             modEventBus.register(MoniShaders.class);
-            modEventBus.addListener(this::registerAdditionalModels);
             if (!GTCEu.isDataGen()) {
                 ActionRegister.init();
             }
             MoniTrails.init();
         }
 
-        modEventBus.addListener(this::addMaterialRegistries);
         modEventBus.addListener(this::addMaterials);
         modEventBus.addListener(this::modifyMaterials);
         modEventBus.addGenericListener(SoundEntry.class, this::registerSounds);
@@ -144,7 +140,6 @@ public class MoniLabs {
 
     public static void init() {
         MoniConfig.init();
-        REGISTRATE.registerRegistrate();
         MoniBlocks.init();
         MoniItems.init();
         MoniDataGen.init();
@@ -183,12 +178,6 @@ public class MoniLabs {
                 .register(MoniLabs.id("sculk_vat"), SculkVatRender.TYPE);
         DynamicRenderManager
                 .register(MoniLabs.id("helical_fusion"), HelicalFusionRenderer.TYPE);
-    }
-
-    // You MUST have this for custom materials.
-    // Remember to register them not to GT's namespace, but your own.
-    private void addMaterialRegistries(MaterialRegistryEvent event) {
-        GTCEuAPI.materialManager.createRegistry(MoniLabs.MOD_ID);
     }
 
     // As well as this.
@@ -237,9 +226,5 @@ public class MoniLabs {
                 BlackHoleRenderer.updateTextures();
             }
         });
-    }
-
-    public void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
-        event.register(CreativeEnergyRender.SPHERE);
     }
 }
