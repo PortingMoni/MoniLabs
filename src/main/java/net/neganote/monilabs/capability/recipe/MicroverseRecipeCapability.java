@@ -1,27 +1,19 @@
 package net.neganote.monilabs.capability.recipe;
 
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
-import com.gregtechceu.gtceu.api.recipe.GTRecipe;
-import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.content.IContentSerializer;
 
-import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
-import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
-
-import net.minecraft.client.resources.language.I18n;
+import net.neganote.monilabs.MoniLabs;
 import net.neganote.monilabs.common.machine.multiblock.Microverse;
 
 import com.mojang.serialization.Codec;
-import org.apache.commons.lang3.mutable.MutableInt;
-
-import java.util.List;
 
 public class MicroverseRecipeCapability extends RecipeCapability<Microverse> {
 
     public static MicroverseRecipeCapability CAP = new MicroverseRecipeCapability();
 
     protected MicroverseRecipeCapability() {
-        super("microverse", 0xFF00FFFF, false, 11, SerializerMicroverse.INSTANCE);
+        super(MoniLabs.id("microverse"), 0xFF00FFFF, false, 11, SerializerMicroverse.INSTANCE);
     }
 
     @Override
@@ -34,6 +26,9 @@ public class MicroverseRecipeCapability extends RecipeCapability<Microverse> {
         return true;
     }
 
+    /*
+     * spotless:off
+    // TODO: When we add recipe capability XEI info options, add this back
     @Override
     public void addXEIInfo(WidgetGroup group, int xOffset, GTRecipe recipe, List<Content> contents, boolean perTick,
                            boolean isInput, MutableInt yOffset) {
@@ -43,7 +38,8 @@ public class MicroverseRecipeCapability extends RecipeCapability<Microverse> {
                         I18n.get(microverse.langKey))));
         super.addXEIInfo(group, xOffset, recipe, contents, perTick, isInput, yOffset);
     }
-
+    // spotless:on
+     */
     private static class SerializerMicroverse implements IContentSerializer<Microverse> {
 
         public static SerializerMicroverse INSTANCE = new SerializerMicroverse();

@@ -1,13 +1,7 @@
 package net.neganote.monilabs.capability.recipe;
 
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
-import com.gregtechceu.gtceu.api.recipe.GTRecipe;
-import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.content.IContentSerializer;
-
-import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
-import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
-import com.lowdragmc.lowdraglib.utils.LocalizationUtils;
 
 import net.neganote.monilabs.MoniLabs;
 import net.neganote.monilabs.common.machine.multiblock.Color;
@@ -15,9 +9,6 @@ import net.neganote.monilabs.common.machine.multiblock.Color;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Codec;
-import org.apache.commons.lang3.mutable.MutableInt;
-
-import java.util.List;
 
 public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
 
@@ -37,7 +28,8 @@ public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
         return content;
     }
 
-    /* spotless:off
+    /*
+     * spotless:off
     // TODO: When we add recipe capability XEI info options, add this back
     @Override
     public void addXEIInfo(WidgetGroup group, int xOffset, GTRecipe recipe, List<Content> contents, boolean perTick,
