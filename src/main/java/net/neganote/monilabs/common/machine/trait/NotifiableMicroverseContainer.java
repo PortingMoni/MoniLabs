@@ -2,8 +2,6 @@ package net.neganote.monilabs.common.machine.trait;
 
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
-import com.gregtechceu.gtceu.api.machine.trait.MachineTrait;
-import com.gregtechceu.gtceu.api.machine.trait.MachineTraitType;
 import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableRecipeHandlerTrait;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 
@@ -16,14 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class NotifiableMicroverseContainer extends NotifiableRecipeHandlerTrait<Microverse> {
-
-    public static final MachineTraitType<NotifiableMicroverseContainer> TYPE = new MachineTraitType<>(
-            NotifiableMicroverseContainer.class);
-
-    @Override
-    public MachineTraitType<? extends MachineTrait> getTraitType() {
-        return TYPE;
-    }
 
     public NotifiableMicroverseContainer() {
         super();
