@@ -21,8 +21,7 @@ public class OmnicSynthProgressProvider implements IBlockComponentProvider, ISer
             if (data.contains("currentDiversityPoints")) {
                 var currentDiversityPoints = data.getInt("currentDiversityPoints");
                 iTooltip.add(Component.translatable("monilabs.omnic.current_diversity_points",
-                        currentDiversityPoints)
-                        .append(Component.literal("%")));
+                        currentDiversityPoints));
             }
         }
     }

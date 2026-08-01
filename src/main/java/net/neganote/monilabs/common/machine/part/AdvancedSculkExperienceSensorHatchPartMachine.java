@@ -1,9 +1,9 @@
 package net.neganote.monilabs.common.machine.part;
 
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.widget.IntInputWidget;
 import com.gregtechceu.gtceu.api.gui.widget.ToggleButtonWidget;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
@@ -59,8 +59,8 @@ public class AdvancedSculkExperienceSensorHatchPartMachine extends SculkExperien
             AdvancedSculkExperienceSensorHatchPartMachine.class,
             SculkExperienceSensorHatchPartMachine.MANAGED_FIELD_HOLDER);
 
-    public AdvancedSculkExperienceSensorHatchPartMachine(IMachineBlockEntity holder) {
-        super(holder);
+    public AdvancedSculkExperienceSensorHatchPartMachine(BlockEntityCreationInfo info) {
+        super(info);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package net.neganote.monilabs.common.machine.part;
 
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.widget.ToggleButtonWidget;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.IFancyUIMachine;
 
 import com.lowdragmc.lowdraglib.gui.texture.ResourceBorderTexture;
@@ -50,8 +50,8 @@ public class AdvancedChromaSensorHatchPartMachine extends ChromaSensorHatchPartM
     @DescSynced
     public boolean inverted = false;
 
-    public AdvancedChromaSensorHatchPartMachine(IMachineBlockEntity holder) {
-        super(holder);
+    public AdvancedChromaSensorHatchPartMachine(BlockEntityCreationInfo info) {
+        super(info);
     }
 
     @Override
