@@ -1,29 +1,21 @@
 package net.neganote.monilabs.capability.recipe;
 
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
-import com.gregtechceu.gtceu.api.recipe.GTRecipe;
-import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.content.IContentSerializer;
 
-import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
-import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
-import com.lowdragmc.lowdraglib.utils.LocalizationUtils;
-
+import net.neganote.monilabs.MoniLabs;
 import net.neganote.monilabs.common.machine.multiblock.Color;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Codec;
-import org.apache.commons.lang3.mutable.MutableInt;
-
-import java.util.List;
 
 public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
 
     public static final ChromaRecipeCapability CAP = new ChromaRecipeCapability();
 
     protected ChromaRecipeCapability() {
-        super("Chroma", 0xFF00FFFF, true, 10, SerializerColor.INSTANCE);
+        super(MoniLabs.id("chroma"), 0xFF00FFFF, true, 10, SerializerColor.INSTANCE);
     }
 
     @Override
@@ -36,6 +28,9 @@ public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
         return content;
     }
 
+    /*
+     * spotless:off
+    // TODO: When we add recipe capability XEI info options, add this back
     @Override
     public void addXEIInfo(WidgetGroup group, int xOffset, GTRecipe recipe, List<Content> contents, boolean perTick,
                            boolean isInput, MutableInt yOffset) {
@@ -43,7 +38,7 @@ public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
             group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
                     LocalizationUtils.format("monilabs.recipe.mistake_input_colors")));
         } else {
-            Color inputColor = ((ChromaIngredient) contents.get(0).getContent()).color();
+            Color inputColor = ((ChromaIngredient) contents.get(0).content()).color();
             if (inputColor.isRealColor()) {
                 group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
                         LocalizationUtils.format("monilabs.recipe.required_color",
@@ -90,6 +85,8 @@ public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
 
         }
     }
+    // spotless:on
+     */
 
     private static class SerializerColor implements IContentSerializer<ChromaIngredient> {
 

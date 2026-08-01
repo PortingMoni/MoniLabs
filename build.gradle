@@ -114,6 +114,13 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    exclusiveContent { // Configuration
+        forRepositories(
+                maven { url = "https://repo.repsy.io/mvn/toma/public/" },
+                maven { url = "https://api.repsy.io/mvn/toma/public" },
+        )
+        filter { includeGroup("dev.toma.configuration")}
+    }
     maven {
         name = "ftbMavenReleases"
         url = uri("https://maven.ftb.dev/releases")
@@ -223,7 +230,7 @@ dependencies {
     modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
     modImplementation("dev.latvian.mods:kubejs-forge:${kubejs_version}")
     modImplementation("dev.latvian.mods:rhino-forge:${rhino_version}")
-    modImplementation("dev.toma.configuration:configuration-forge-${minecraft_version}:${configuration_version}")
+    modImplementation("dev.toma.configuration:configuration-${minecraft_version}:${configuration_version}")
     modImplementation("dev.architectury:architectury-forge:${architectury_version}")
     jarJar(modImplementation("appeng:appliedenergistics2-forge:${ae2_version}"))
     modImplementation("org.appliedenergistics:guideme:${guideme_version}")

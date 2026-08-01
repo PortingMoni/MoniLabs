@@ -97,7 +97,7 @@ public class SculkVatRender extends DynamicRender<SculkVatMachine, SculkVatRende
                     sculkVat.self().isFlipped());
             if (dir.getAxis() != Direction.Axis.Y) dir = dir.getOpposite();
 
-            fluidBlockRenderer.drawPlane(dir, sculkVat.getTrait(MultiblockFluidRendererTrait.TYPE)
+            fluidBlockRenderer.drawPlane(dir, sculkVat.getTrait(MultiblockFluidRendererTrait.class)
                     .getFluidOffsets(), poseStack, consumer, cachedFluid,
                     RenderUtil.FluidTextureType.STILL, packedOverlay, sculkVat.self().getBlockPos(),
                     sculkVat.getLevel());
@@ -114,7 +114,7 @@ public class SculkVatRender extends DynamicRender<SculkVatMachine, SculkVatRende
     @Override
     public AABB getRenderBoundingBox(SculkVatMachine machine) {
         AABB box = super.getRenderBoundingBox(machine);
-        var offsets = machine.getTrait(MultiblockFluidRendererTrait.TYPE).getFluidOffsets();
+        var offsets = machine.getTrait(MultiblockFluidRendererTrait.class).getFluidOffsets();
         for (var offset : offsets) {
             box = box.minmax(new AABB(offset));
         }
@@ -123,6 +123,6 @@ public class SculkVatRender extends DynamicRender<SculkVatMachine, SculkVatRende
 
     @Override
     public boolean shouldRender(SculkVatMachine machine, Vec3 cameraPos) {
-        return machine.isFormed() && machine.getTrait(MultiblockFluidRendererTrait.TYPE).getFluidOffsets() != null;
+        return machine.isFormed() && machine.getTrait(MultiblockFluidRendererTrait.class).getFluidOffsets() != null;
     }
 }

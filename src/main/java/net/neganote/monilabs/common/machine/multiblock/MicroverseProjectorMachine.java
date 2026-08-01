@@ -279,7 +279,7 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
     }
 
     @ClientFieldChangeListener(fieldName = "microverse")
-    public void onMicroverseChange(Microverse oldMicroverse, Microverse newMicroverse) {
+    public void onMicroverseChange() {
         scheduleRenderUpdate();
     }
 }

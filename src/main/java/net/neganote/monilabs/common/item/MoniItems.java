@@ -23,9 +23,7 @@ public class MoniItems {
         REGISTRATE.creativeModeTab(() -> MoniLabs.MONI_CREATIVE_TAB);
     }
 
-    public static void init() {
-        MoniCovers.init();
-    }
+    public static void init() {}
 
     public static final ItemEntry<Item> MAX_ELECTRIC_MOTOR = REGISTRATE
             .item("max_electric_motor", Item::new)

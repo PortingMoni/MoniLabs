@@ -7,7 +7,9 @@ import com.gregtechceu.gtceu.api.cover.CoverDefinition;
 import com.gregtechceu.gtceu.api.data.chemical.Element;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
+import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
+import com.gregtechceu.gtceu.api.placeholder.Placeholder;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.MapIngredientTypeManager;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
@@ -45,6 +47,7 @@ import net.neganote.monilabs.common.cover.MoniCovers;
 import net.neganote.monilabs.common.data.MoniPlaceholders;
 import net.neganote.monilabs.common.data.MoniSounds;
 import net.neganote.monilabs.common.data.materials.MoniElements;
+import net.neganote.monilabs.common.data.materials.MoniMaterialIconSets;
 import net.neganote.monilabs.common.data.materials.MoniMaterials;
 import net.neganote.monilabs.common.item.MoniItems;
 import net.neganote.monilabs.common.machine.MoniMachines;
@@ -134,6 +137,8 @@ public class MoniLabs {
         modEventBus.addGenericListener(CoverDefinition.class, this::registerCovers);
         modEventBus.addGenericListener(Element.class, this::registerElements);
         modEventBus.addGenericListener(RecipeCapability.class, this::registerRecipeCapabilities);
+        modEventBus.addGenericListener(Placeholder.class, this::registerPlaceholders);
+        modEventBus.addGenericListener(MaterialIconSet.class, this::registerMaterialIconSets);
         modEventBus.addListener(MoniRecipeComponents::registerRecipeKeys);
         modEventBus.addListener(this::onRegisterReloadListeners);
         // Most other events are fired on Forge's bus.
@@ -149,7 +154,6 @@ public class MoniLabs {
         MoniBlocks.init();
         MoniItems.init();
         MoniDataGen.init();
-        MoniPlaceholders.init();
     }
 
     @Contract("_ -> new")
@@ -186,12 +190,14 @@ public class MoniLabs {
                 .register(MoniLabs.id("helical_fusion"), HelicalFusionRenderer.TYPE);
     }
 
-    // As well as this.
+    private void registerMaterialIconSets(GTCEuAPI.RegisterEvent<ResourceLocation, MaterialIconSet> event) {
+        MoniMaterialIconSets.init();
+    }
+
     private void addMaterials(MaterialEvent event) {
         MoniMaterials.register();
     }
 
-    // This is optional, though.
     private void modifyMaterials(PostMaterialEvent event) {
         // CustomMaterials.modify();
     }
@@ -207,6 +213,10 @@ public class MoniLabs {
 
     private void registerMachines(GTCEuAPI.RegisterEvent<ResourceLocation, MachineDefinition> event) {
         MoniMachines.init();
+    }
+
+    private void registerPlaceholders(GTCEuAPI.RegisterEvent<ResourceLocation, Placeholder> event) {
+        MoniPlaceholders.init();
     }
 
     // spotless:on

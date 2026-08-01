@@ -4,8 +4,6 @@ import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
-import com.gregtechceu.gtceu.api.machine.trait.MachineTrait;
-import com.gregtechceu.gtceu.api.machine.trait.MachineTraitType;
 import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableEnergyContainer;
 import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableRecipeHandlerTrait;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
@@ -46,11 +44,6 @@ public class NotifiableEnergyContainerMixin extends NotifiableRecipeHandlerTrait
     @Override
     public MetaMachine getMachine() {
         return super.getMachine();
-    }
-
-    @Override
-    public MachineTraitType<? extends MachineTrait> getTraitType() {
-        return NotifiableEnergyContainer.TYPE;
     }
 
     @Inject(method = "getEnergyStored()J", at = @At(value = "HEAD"), cancellable = true)

@@ -2,8 +2,6 @@ package net.neganote.monilabs.common.machine.trait;
 
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
-import com.gregtechceu.gtceu.api.machine.trait.MachineTrait;
-import com.gregtechceu.gtceu.api.machine.trait.MachineTraitType;
 import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableRecipeHandlerTrait;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 
@@ -19,9 +17,6 @@ import java.util.List;
 
 @NoArgsConstructor
 public class NotifiableChromaContainer extends NotifiableRecipeHandlerTrait<ChromaIngredient> {
-
-    public static final MachineTraitType<NotifiableChromaContainer> TYPE = new MachineTraitType<>(
-            NotifiableChromaContainer.class);
 
     public Color getHeldColor() {
         if (!(getMachine() instanceof PrismaticCrucibleMachine prismac)) {
@@ -69,10 +64,5 @@ public class NotifiableChromaContainer extends NotifiableRecipeHandlerTrait<Chro
     @Override
     public RecipeCapability<ChromaIngredient> getCapability() {
         return MoniRecipeCapabilities.CHROMA;
-    }
-
-    @Override
-    public MachineTraitType<? extends MachineTrait> getTraitType() {
-        return TYPE;
     }
 }
