@@ -6,8 +6,6 @@ import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.common.data.GTSoundEntries;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
-import com.lowdragmc.lowdraglib.utils.LocalizationUtils;
-
 import net.minecraft.network.chat.Component;
 import net.neganote.monilabs.capability.recipe.MoniRecipeCapabilities;
 import net.neganote.monilabs.client.gui.MoniGuiTextures;
@@ -55,20 +53,22 @@ public class MoniRecipeTypes {
                                 StringBuilder strBuilder;
                                 if (isRelative) {
                                     strBuilder = new StringBuilder(
-                                            LocalizationUtils
-                                                    .format("monilabs.recipe.color_list_random_start_relative"));
+                                            Component.translatable("monilabs.recipe.color_list_random_start_relative")
+                                                    .getString());
                                 } else {
                                     strBuilder = new StringBuilder(
-                                            LocalizationUtils.format("monilabs.recipe.color_list_random_start"));
+                                            Component.translatable("monilabs.recipe.color_list_random_start")
+                                                    .getString());
                                 }
                                 for (int i = 0; i < outputStatesCount; i++) {
-                                    strBuilder.append(LocalizationUtils
-                                            .format(Color.getColorFromKey(data.getInt("output_states_" + i)).nameKey));
+                                    strBuilder.append(Component.translatable(
+                                            Color.getColorFromKey(data.getInt("output_states_" + i)).nameKey));
                                     if (i % 3 == 2) {
                                         strBuilder.append("\n");
                                     } else {
                                         strBuilder.append(
-                                                LocalizationUtils.format("monilabs.recipe.color_list_separator"));
+                                                Component.translatable("monilabs.recipe.color_list_separator")
+                                                        .getString());
                                     }
 
                                 }

@@ -5,8 +5,6 @@ import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMa
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
 
-import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
-
 import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
@@ -18,7 +16,6 @@ public class OmnicSynthesizerMachine extends WorkableElectricMultiblockMachine {
     public List<Item> diversityList = new ArrayList<>();
 
     @SaveField
-    @DescSynced
     public int diversityPoints = 0;
 
     @SaveField
