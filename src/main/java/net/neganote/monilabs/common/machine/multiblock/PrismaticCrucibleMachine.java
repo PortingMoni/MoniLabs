@@ -1,16 +1,14 @@
 package net.neganote.monilabs.common.machine.multiblock;
 
 import com.gregtechceu.gtceu.api.block.property.GTBlockStateProperties;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
-import com.gregtechceu.gtceu.api.pattern.util.RelativeDirection;
+import com.gregtechceu.gtceu.api.multiblock.util.RelativeDirection;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
-
-import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
-import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
-import com.lowdragmc.lowdraglib.syncdata.annotation.RequireRerender;
-import com.lowdragmc.lowdraglib.syncdata.annotation.UpdateListener;
-import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
+import com.gregtechceu.gtceu.api.sync_system.annotations.ClientFieldChangeListener;
+import com.gregtechceu.gtceu.api.sync_system.annotations.RerenderOnChanged;
+import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
+import com.gregtechceu.gtceu.api.sync_system.annotations.SyncToClient;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,47 +31,44 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @SuppressWarnings("unused")
 public class PrismaticCrucibleMachine extends WorkableElectricMultiblockMachine {
 
-    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            PrismaticCrucibleMachine.class, WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
-
     @Getter
-    @Persisted
-    @DescSynced
+    @SaveField
+    @SyncToClient
     private Set<BlockPos> fluidBlockOffsets = new HashSet<>();
 
     @Getter
-    @Persisted
-    @DescSynced
-    @RequireRerender
-    @UpdateListener(methodName = "onColorChange")
+    @SaveField
+    @SyncToClient
+    @RerenderOnChanged
     private Color color;
 
     @Getter
-    @DescSynced
-    @Persisted
+    @SyncToClient
+    @SaveField
     private BlockPos focusPos;
 
     private BlockPos structMin;
 
     private BlockPos structMax;
 
-    @Persisted
+    @SaveField
     private final NotifiableChromaContainer notifiableChromaContainer;
 
-    public PrismaticCrucibleMachine(IMachineBlockEntity holder, Object... args) {
-        super(holder, args);
+    public PrismaticCrucibleMachine(BlockEntityCreationInfo info) {
+        super(info);
         this.color = Color.RED;
-        this.notifiableChromaContainer = new NotifiableChromaContainer(this);
-        structMin = getPos();
-        structMax = getPos();
+        getSyncDataHolder().markClientSyncFieldDirty("color");
+        this.notifiableChromaContainer = attachTrait(new NotifiableChromaContainer());
+        structMin = getBlockPos();
+        structMax = getBlockPos();
         saveOffsets();
         focusPos = null;
     }
 
     private void saveStructBoundingBox() {
-        var cache = getMultiblockState().getCache();
-        if (structMin.equals(getPos()) && structMax.equals(getPos())) {
-            for (BlockPos pos : cache) {
+        var cache = getDefaultPatternState().getCache();
+        if (structMin.equals(getBlockPos()) && structMax.equals(getBlockPos())) {
+            for (BlockPos pos : cache.keySet().stream().map(BlockPos::of).toList()) {
                 if (structMin == null || structMax == null) {
                     structMin = pos;
                     structMax = pos;
@@ -90,30 +85,26 @@ public class PrismaticCrucibleMachine extends WorkableElectricMultiblockMachine 
     }
 
     @Override
-    @NotNull
-    public ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
-    }
-
-    @Override
-    public void onStructureInvalid() {
+    public void invalidateStructure() {
         changeColorState(Color.RED);
-        super.onStructureInvalid();
+        super.invalidateStructure();
     }
 
     @Override
     public void onRotated(Direction oldFacing, Direction newFacing) {
         super.onRotated(oldFacing, newFacing);
-        structMin = getPos();
-        structMax = getPos();
+        structMin = getBlockPos();
+        structMax = getBlockPos();
     }
 
     @Override
-    public void onStructureFormed() {
-        super.onStructureFormed();
+    public void formStructure(@NotNull String substructureName) {
+        super.formStructure(substructureName);
 
-        for (BlockPos pos : getMultiblockState().getCache()) {
-            if (Objects.requireNonNull(getLevel()).getBlockState(pos).getBlock() == MoniBlocks.PRISMATIC_FOCUS.get()) {
+        for (var entry : getDefaultPatternState().getCache().long2ObjectEntrySet()) {
+            var pos = BlockPos.of(entry.getLongKey());
+            var blockState = entry.getValue().getBlockState();
+            if (blockState.is(MoniBlocks.PRISMATIC_FOCUS.get())) {
                 focusPos = pos;
                 break;
             }
@@ -173,6 +164,7 @@ public class PrismaticCrucibleMachine extends WorkableElectricMultiblockMachine 
     private void changeColorState(Color newColor) {
         color = newColor;
         updateActiveBlocks(true);
+        getSyncDataHolder().markClientSyncFieldDirty("color");
     }
 
     @Override
@@ -212,9 +204,9 @@ public class PrismaticCrucibleMachine extends WorkableElectricMultiblockMachine 
 
     // Stolen from LargeChemicalBathMachine
     public void saveOffsets() {
-        Direction up = RelativeDirection.UP.getRelative(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        Direction up = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
         Direction back = getFrontFacing().getOpposite();
-        BlockPos pos = getPos();
+        BlockPos pos = getBlockPos();
         BlockPos center = pos.relative(up);
         Direction clockWise;
         Direction counterClockWise;
@@ -233,6 +225,7 @@ public class PrismaticCrucibleMachine extends WorkableElectricMultiblockMachine 
             fluidBlockOffsets.add(center.relative(clockWise).subtract(pos));
             fluidBlockOffsets.add(center.relative(counterClockWise).subtract(pos));
         }
+        getSyncDataHolder().markClientSyncFieldDirty("fluidBlockOffsets");
     }
 
     @Override
@@ -244,6 +237,7 @@ public class PrismaticCrucibleMachine extends WorkableElectricMultiblockMachine 
         return color;
     }
 
+    @ClientFieldChangeListener(fieldName = "color")
     public void onColorChange(Color oldColor, Color newColor) {
         scheduleRenderUpdate();
     }
