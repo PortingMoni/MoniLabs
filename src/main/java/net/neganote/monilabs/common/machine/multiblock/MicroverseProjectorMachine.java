@@ -1,23 +1,22 @@
 package net.neganote.monilabs.common.machine.multiblock;
 
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
-import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
+import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableItemStackHandler;
+import com.gregtechceu.gtceu.api.machine.trait.recipe.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 import com.gregtechceu.gtceu.api.recipe.modifier.ParallelLogic;
+import com.gregtechceu.gtceu.api.sync_system.annotations.ClientFieldChangeListener;
+import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
+import com.gregtechceu.gtceu.api.sync_system.annotations.SyncToClient;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 
-import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
-import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.annotation.RequireRerender;
-import com.lowdragmc.lowdraglib.syncdata.annotation.UpdateListener;
-import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
@@ -29,9 +28,16 @@ import net.neganote.monilabs.common.item.MoniItems;
 import net.neganote.monilabs.common.machine.trait.NotifiableMicroverseContainer;
 import net.neganote.monilabs.config.MoniConfig;
 
+import brachy.modularui.api.drawable.Text;
+import brachy.modularui.api.widget.IWidget;
+import brachy.modularui.value.sync.BooleanSyncValue;
+import brachy.modularui.value.sync.IntSyncValue;
+import brachy.modularui.value.sync.PanelSyncManager;
+import brachy.modularui.value.sync.StringSyncValue;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -45,11 +51,8 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
 
     private final ConditionalSubscriptionHandler microverseHandler;
 
-    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            MicroverseProjectorMachine.class, WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
-
     @Getter
-    @Persisted
+    @SaveField
     private final Set<BlockPos> fluidBlockOffsets = new HashSet<>();
 
     // Used for microverse projector tier
@@ -57,17 +60,16 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
     private final int projectorTier;
 
     // Microverse type currently active
-    @Persisted
-    @DescSynced
+    @SaveField
+    @SyncToClient
     @Setter
     @Getter
     @RequireRerender
-    @UpdateListener(methodName = "onMicroverseChange")
     private Microverse microverse;
 
     // Current microverse integrity/"health"
-    @Persisted
-    @DescSynced
+    @SaveField
+    @SyncToClient
     @Getter
     private int microverseIntegrity;
 
@@ -81,28 +83,23 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
     private final static GTRecipe quantumFluxRecipe = GTRecipeBuilder.ofRaw().inputItems(MoniItems.QUANTUM_FLUX)
             .buildRawRecipe();
 
-    @Persisted
+    @SaveField
     private final NotifiableMicroverseContainer microverseContainer;
 
-    public MicroverseProjectorMachine(IMachineBlockEntity holder, int tier, Object... args) {
-        super(holder, args);
+    public MicroverseProjectorMachine(BlockEntityCreationInfo info, int tier) {
+        super(info);
         this.projectorTier = tier;
         this.microverseHandler = new ConditionalSubscriptionHandler(this, this::microverseTick, this::isFormed);
         updateMicroverse(0, false);
-        this.microverseContainer = new NotifiableMicroverseContainer(this);
+        this.microverseContainer = attachTrait(new NotifiableMicroverseContainer());
     }
 
     @Override
-    public ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
-    }
-
-    @Override
-    public void onStructureInvalid() {
+    public void invalidateStructure(String name) {
         if (microverse.decayRate != 0) {
             updateMicroverse(0, false);
         }
-        super.onStructureInvalid();
+        super.invalidateStructure(name);
         microverseHandler.updateSubscription();
         inputBuses = null;
         outputBuses = null;
@@ -114,8 +111,8 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
     }
 
     @Override
-    public void onStructureFormed() {
-        super.onStructureFormed();
+    public void formStructure(@NotNull String substructureName) {
+        super.formStructure(substructureName);
         microverseHandler.updateSubscription();
     }
 
@@ -160,7 +157,7 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
             if (microverseIntegrity == 0 && microverse != Microverse.NONE) {
                 if (MoniConfig.INSTANCE.values.microminerReturnedOnZeroIntegrity) {
                     var contents = (Ingredient) activeRecipe.getInputContents(ItemRecipeCapability.CAP).get(0)
-                            .getContent();
+                            .content();
                     List<Ingredient> left = List.of(contents);
                     for (var outputBus : outputBuses) {
                         left = outputBus.handleRecipe(IO.OUT, activeRecipe, left, false);
@@ -173,14 +170,16 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
                 if (microverse == Microverse.SHATTERED) {
                     microverseIntegrity = MICROVERSE_MAX_INTEGRITY >> 1; // start at half integrity
                     microverse = Microverse.CORRUPTED;
-                    markDirty();
                 } else {
                     microverseIntegrity = 0;
                     microverse = Microverse.NONE;
                 }
+                getSyncDataHolder().markClientSyncFieldDirty("microverse");
+                getSyncDataHolder().markClientSyncFieldDirty("microverseIntegrity");
                 recipeLogic.resetRecipeLogic();
                 return false;
             }
+            getSyncDataHolder().markClientSyncFieldDirty("microverseIntegrity");
         }
         return true;
     }
@@ -224,7 +223,7 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
 
                 var usedToHeal = Math.min(fluxToFullHeal, fluxToConsume);
                 microverseIntegrity += usedToHeal * FLUX_REPAIR_AMOUNT;
-
+                getSyncDataHolder().markClientSyncFieldDirty("microverseIntegrity");
                 if (microverse.isHungry && fluxToConsume > usedToHeal) {
                     int rollbackCount = fluxToConsume - usedToHeal;
                     if (recipeLogic.getLastRecipe() != null && recipeLogic.getProgress() > 1) {
@@ -239,6 +238,7 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
             if (microverseIntegrity <= 0) {
                 updateMicroverse(0, false);
             }
+            getSyncDataHolder().markClientSyncFieldDirty("microverseIntegrity");
         }
     }
 
@@ -249,21 +249,36 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
         } else {
             microverseIntegrity = (keepIntegrity ? microverseIntegrity : MICROVERSE_MAX_INTEGRITY);
         }
+        getSyncDataHolder().markClientSyncFieldDirty("microverse");
+        getSyncDataHolder().markClientSyncFieldDirty("microverseIntegrity");
     }
 
     @Override
-    public void addDisplayText(List<Component> textList) {
-        super.addDisplayText(textList);
-        if (isFormed()) {
-            textList.add(Component.translatable("microverse.monilabs.current_microverse",
-                    Component.translatable(microverse.langKey)));
-            if (microverse != Microverse.NONE) {
-                textList.add(Component.translatable("microverse.monilabs.integrity",
-                        (float) microverseIntegrity / FLUX_REPAIR_AMOUNT));
-            }
-        }
+    public List<IWidget> getWidgetsForDisplay(PanelSyncManager syncManager) {
+        StringSyncValue microverseLangKey = new StringSyncValue(() -> this.microverse.langKey);
+        syncManager.syncValue("microverseLangKey", microverseLangKey);
+        BooleanSyncValue isMicroverseNone = new BooleanSyncValue(() -> this.microverse == Microverse.NONE);
+        syncManager.syncValue("isMicroverseNone", isMicroverseNone);
+        IntSyncValue microverseIntegrity = new IntSyncValue(() -> this.microverseIntegrity);
+        syncManager.syncValue("microverseIntegrity", microverseIntegrity);
+        BooleanSyncValue isFormed = syncManager.getOrCreateSyncHandler("isFormed", BooleanSyncValue.class,
+                () -> new BooleanSyncValue(this::isFormed));
+
+        List<IWidget> list = super.getWidgetsForDisplay(syncManager);
+        list.add(Text
+                .dynamic(() -> Component.translatable("microverse.monilabs.current_microverse",
+                        microverseLangKey.getStringValue()))
+                .asWidget()
+                .setEnabledIf(w -> isFormed.getBoolValue()));
+        list.add(Text
+                .dynamic(() -> Component.translatable("microverse.monilabs.integrity",
+                        microverseIntegrity.getDoubleValue() / FLUX_REPAIR_AMOUNT))
+                .asWidget()
+                .setEnabledIf(w -> isFormed.getBoolValue() && !isMicroverseNone.getBoolValue()));
+        return list;
     }
 
+    @ClientFieldChangeListener(fieldName = "microverse")
     public void onMicroverseChange(Microverse oldMicroverse, Microverse newMicroverse) {
         scheduleRenderUpdate();
     }

@@ -1,8 +1,8 @@
 package net.neganote.monilabs.common.machine.part;
 
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.widget.ToggleButtonWidget;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.IFancyUIMachine;
 
 import com.lowdragmc.lowdraglib.gui.texture.ResourceBorderTexture;
@@ -52,8 +52,8 @@ public class AdvancedMicroverseTypeSensorHatchPartMachine extends MicroverseType
             AdvancedMicroverseTypeSensorHatchPartMachine.class,
             MicroverseTypeSensorHatchPartMachine.MANAGED_FIELD_HOLDER);
 
-    public AdvancedMicroverseTypeSensorHatchPartMachine(IMachineBlockEntity holder) {
-        super(holder);
+    public AdvancedMicroverseTypeSensorHatchPartMachine(BlockEntityCreationInfo info) {
+        super(info);
     }
 
     @Override
