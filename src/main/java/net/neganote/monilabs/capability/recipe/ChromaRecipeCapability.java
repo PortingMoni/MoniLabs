@@ -15,7 +15,7 @@ public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
     public static final ChromaRecipeCapability CAP = new ChromaRecipeCapability();
 
     protected ChromaRecipeCapability() {
-        super(MoniLabs.id("Chroma"), 0xFF00FFFF, true, 10, SerializerColor.INSTANCE);
+        super(MoniLabs.id("chroma"), 0xFF00FFFF, true, 10, SerializerColor.INSTANCE);
     }
 
     @Override
