@@ -1,23 +1,26 @@
 package net.neganote.monilabs.common.machine.part;
 
 import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
-import com.gregtechceu.gtceu.api.gui.GuiTextures;
-import com.gregtechceu.gtceu.api.gui.widget.ToggleButtonWidget;
-import com.gregtechceu.gtceu.api.machine.feature.IFancyUIMachine;
-
-import com.lowdragmc.lowdraglib.gui.texture.ResourceBorderTexture;
-import com.lowdragmc.lowdraglib.gui.widget.*;
-import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
-import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
-import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
+import com.gregtechceu.gtceu.api.machine.feature.IMuiMachine;
+import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
+import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.BlockHitResult;
-import net.neganote.monilabs.common.gui.widget.IndexedSelectorWidget;
+import net.minecraft.network.chat.Component;
 import net.neganote.monilabs.common.machine.multiblock.Color;
 
+import brachy.modularui.api.drawable.Text;
+import brachy.modularui.factory.PosGuiData;
+import brachy.modularui.screen.UISettings;
+import brachy.modularui.value.BoolValue;
+import brachy.modularui.value.sync.BooleanSyncValue;
+import brachy.modularui.value.sync.EnumSyncValue;
+import brachy.modularui.value.sync.PanelSyncManager;
+import brachy.modularui.widget.ParentWidget;
+import brachy.modularui.widget.Widget;
+import brachy.modularui.widgets.ToggleButton;
+import brachy.modularui.widgets.layout.Flow;
+import brachy.modularui.widgets.menu.ContextMenuButton;
 import com.mojang.blaze3d.MethodsReturnNonnullByDefault;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,32 +34,20 @@ import static net.neganote.monilabs.common.machine.multiblock.Color.ACTUAL_COLOR
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class AdvancedChromaSensorHatchPartMachine extends ChromaSensorHatchPartMachine
-                                                  implements IFancyUIMachine {
-
-    public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            AdvancedChromaSensorHatchPartMachine.class,
-            ChromaSensorHatchPartMachine.MANAGED_FIELD_HOLDER);
+public class AdvancedChromaSensorHatchPartMachine extends ChromaSensorHatchPartMachine implements IMuiMachine {
 
     @Setter
     @Getter
-    @Persisted
-    @DescSynced
+    @SaveField
     public Color detectorColor = Color.RED;
 
     @Setter
     @Getter
-    @Persisted
-    @DescSynced
+    @SaveField
     public boolean inverted = false;
 
     public AdvancedChromaSensorHatchPartMachine(BlockEntityCreationInfo info) {
         super(info);
-    }
-
-    @Override
-    public boolean shouldOpenUI(Player player, InteractionHand hand, BlockHitResult hit) {
-        return true;
     }
 
     @Override
@@ -76,39 +67,50 @@ public class AdvancedChromaSensorHatchPartMachine extends ChromaSensorHatchPartM
         }
     }
 
+    private static List<String> displayNames = Arrays.stream(ACTUAL_COLORS)
+            .map(Color::getColoredDisplayName)
+            .toList();
+
     @Override
-    public Widget createUIWidget() {
-        List<String> displayNames = Arrays.stream(ACTUAL_COLORS)
-                .map(Color::getColoredDisplayName)
-                .toList();
+    public void buildMainUI(ParentWidget<?> mainWidget, PosGuiData guiData, PanelSyncManager syncManager,
+                            UISettings settings) {
+        EnumSyncValue<Color> colorSyncValue = new EnumSyncValue<>(Color.class,
+                this::getDetectorColor, this::setDetectorColor).allowC2S();
+        syncManager.syncValue("color", colorSyncValue);
+        BooleanSyncValue isInvertedSyncValue = new BooleanSyncValue(this::isInverted, this::setInverted).allowC2S();
+        syncManager.syncValue("isInverted", isInvertedSyncValue);
 
-        WidgetGroup group = new WidgetGroup(0, 0, 70, 70);
-
-        group.addWidget(new LabelWidget(-40, 15, "gui.monilabs.chroma.color.display"));
-
-        group.addWidget(new IndexedSelectorWidget(
-                -5, 11, 80, 20,
-                displayNames,
-                0)
-                .setMaxCount(3)
-                .setOnChanged(selectedName -> {
-                    int idx = displayNames.indexOf(selectedName);
-                    if (idx >= 0) setDetectorColor(ACTUAL_COLORS[idx]);
-                })
-                .setButtonBackground(ResourceBorderTexture.BUTTON_COMMON)
-                .setSupplier(() -> getDetectorColor().getColoredDisplayName()));
-
-        group.addWidget(new ToggleButtonWidget(
-                80, 11, 20, 20,
-                GuiTextures.INVERT_REDSTONE_BUTTON, this::isInverted, this::setInverted)
-                .isMultiLang()
-                .setTooltipText("gui.advanced_chroma_sensor.invert"));
-
-        return group;
+        mainWidget.child(Flow.col()
+                .child(Text.lang("gui.monilabs.chroma.color.display").asWidget()))
+                .child(new ContextMenuButton<>("colorList")
+                        .menuList(l -> l.height(60)
+                                .children(ACTUAL_COLORS.length, i -> colorButton(colorSyncValue, i))))
+                .child(new ToggleButton()
+                        .value(isInvertedSyncValue)
+                        .overlay(false, GTGuiTextures.OVERLAY_REDSTONE_OFF)
+                        .overlay(true, GTGuiTextures.OVERLAY_REDSTONE_ON)
+                        .tooltipDynamic(t -> {
+                            if (isInvertedSyncValue.getBoolValue()) {
+                                t.add(Component.translatable("gui.advanced_chroma_sensor.invert.enabled.0"));
+                                t.add(Component.translatable("gui.advanced_chroma_sensor.invert.enabled.1"));
+                                t.add(Component.translatable("gui.advanced_chroma_sensor.invert.enabled.2"));
+                                t.add(Component.translatable("gui.advanced_chroma_sensor.invert.enabled.3"));
+                            } else {
+                                t.add(Component.translatable("gui.advanced_chroma_sensor.invert.disabled.0"));
+                                t.add(Component.translatable("gui.advanced_chroma_sensor.invert.disabled.1"));
+                                t.add(Component.translatable("gui.advanced_chroma_sensor.invert.disabled.2"));
+                                t.add(Component.translatable("gui.advanced_chroma_sensor.invert.disabled.3"));
+                            }
+                        }));
     }
 
-    @Override
-    public ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
+    private Widget<?> colorButton(EnumSyncValue<Color> syncValue, int i) {
+        return new ToggleButton().size(18)
+                .value(boolValueOf(syncValue, ACTUAL_COLORS[i]))
+                .overlay(Text.str(displayNames.get(i)));
+    }
+
+    BoolValue.Dynamic boolValueOf(EnumSyncValue<Color> syncValue, Color value) {
+        return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
     }
 }
