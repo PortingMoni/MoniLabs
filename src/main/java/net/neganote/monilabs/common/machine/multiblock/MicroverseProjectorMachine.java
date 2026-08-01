@@ -91,7 +91,7 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
         this.projectorTier = tier;
         this.microverseHandler = new ConditionalSubscriptionHandler(this, this::microverseTick, this::isFormed);
         updateMicroverse(0, false);
-        this.microverseContainer = new NotifiableMicroverseContainer(this);
+        this.microverseContainer = attachTrait(new NotifiableMicroverseContainer());
     }
 
     @Override
