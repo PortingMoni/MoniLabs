@@ -26,12 +26,12 @@ public class MoniRenderUtil {
         }
 
         var fluidContent = contents.stream()
-                .filter(content -> content.content instanceof FluidIngredient ingredient && !ingredient.isEmpty())
+                .filter(content -> content.content() instanceof FluidIngredient ingredient && !ingredient.isEmpty())
                 .findAny();
         if (fluidContent.isEmpty()) {
             return null;
         }
-        var ingredient = (FluidIngredient) fluidContent.get().content;
+        var ingredient = (FluidIngredient) fluidContent.get().content();
 
         var stacks = ingredient.getStacks();
         if (stacks.length == 0) {
