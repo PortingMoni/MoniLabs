@@ -2,8 +2,9 @@ package net.neganote.monilabs.common.machine.trait;
 
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
-import com.gregtechceu.gtceu.api.machine.MetaMachine;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableRecipeHandlerTrait;
+import com.gregtechceu.gtceu.api.machine.trait.MachineTrait;
+import com.gregtechceu.gtceu.api.machine.trait.MachineTraitType;
+import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableRecipeHandlerTrait;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 
 import net.neganote.monilabs.capability.recipe.MoniRecipeCapabilities;
@@ -16,8 +17,16 @@ import java.util.List;
 
 public class NotifiableMicroverseContainer extends NotifiableRecipeHandlerTrait<Microverse> {
 
-    public NotifiableMicroverseContainer(MetaMachine machine) {
-        super(machine);
+    public static final MachineTraitType<NotifiableMicroverseContainer> TYPE = new MachineTraitType<>(
+            NotifiableMicroverseContainer.class);
+
+    @Override
+    public MachineTraitType<? extends MachineTrait> getTraitType() {
+        return TYPE;
+    }
+
+    public NotifiableMicroverseContainer() {
+        super();
     }
 
     public Microverse getHeldMicroverse() {
@@ -28,12 +37,13 @@ public class NotifiableMicroverseContainer extends NotifiableRecipeHandlerTrait<
     }
 
     @Override
-    public IO getHandlerIO() {
+    public @NotNull IO getHandlerIO() {
         return IO.IN;
     }
 
     @Override
-    public List<Microverse> handleRecipeInner(IO io, GTRecipe recipe, List<Microverse> left, boolean simulate) {
+    public @NotNull List<Microverse> handleRecipeInner(IO io, GTRecipe recipe, List<Microverse> left,
+                                                       boolean simulate) {
         Microverse recipeMicroverse = left.get(0);
         if (getHeldMicroverse() == recipeMicroverse) {
             return null;
