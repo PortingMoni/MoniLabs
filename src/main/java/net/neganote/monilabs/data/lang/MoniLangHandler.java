@@ -120,8 +120,8 @@ public class MoniLangHandler {
         provider.add("emi_info.monilabs.projector_info", "Projector tier: %d");
         provider.add("emi_info.monilabs.required_microverse", "Required type: %s");
         provider.add("emi_info.monilabs.new_microverse", "New type: %s");
-        provider.add("emi_info.monilabs.integrity_drained", "Integrity drained: %.2f");
-        provider.add("emi_info.monilabs.integrity_healed", "Integrity healed: %.2f");
+        provider.add("emi_info.monilabs.integrity_drained", "Integrity drained: %.2f%%");
+        provider.add("emi_info.monilabs.integrity_healed", "Integrity healed: %.2f%%");
         provider.add("emi_info.monilabs.cannot_parallel", "Cannot parallel");
 
         provider.add("monilabs.menu.packmodeswitcher.displayname", "Switch Pack Mode");
