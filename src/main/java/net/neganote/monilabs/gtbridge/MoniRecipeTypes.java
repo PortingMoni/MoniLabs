@@ -157,6 +157,17 @@ public class MoniRecipeTypes {
                     }))
             .setSound(GTSoundEntries.COMPUTATION);
 
+    public static GTRecipeType OMNIC_SYNTHESIS = GTRecipeTypes.register("omnic_synthesis", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN)
+            .setMaxIOSize(1, 1, 0, 0)
+            .setSound(GTSoundEntries.CHEMICAL)
+            .UI(builder -> builder.setProgressBar(GTGuiTextures.PROGRESS_ARROW)
+                    .addRecipeUIModifier((recipe, widget) -> widget.textComponents
+                            .child(Text.lang("gtceu.multiblock.omnic_synthesizer.emi_info.0").asWidget())
+                            .child(Text.lang("gtceu.multiblock.omnic_synthesizer.emi_info.1").asWidget())
+                            .child(Text.lang("gtceu.multiblock.omnic_synthesizer.emi_info.2").asWidget())
+                            .child(Text.lang("gtceu.multiblock.omnic_synthesizer.emi_info.3").asWidget())));
+
     public static GTRecipeType SCULK_VAT_RECIPES = GTRecipeTypes
             .register("sculk_vat", GTRecipeTypes.MULTIBLOCK)
             .setEUIO(IO.IN)
