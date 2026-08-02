@@ -7,6 +7,7 @@ import net.neganote.monilabs.MoniLabs;
 
 import brachy.modularui.drawable.ColorType;
 import brachy.modularui.drawable.UITexture;
+import brachy.modularui.drawable.progress.ProgressDrawable;
 
 public class MoniGuiTextures {
 
@@ -27,8 +28,8 @@ public class MoniGuiTextures {
     public static final ProgressBarTextureSet PROGRESS_BAR_SIMULATION = new ProgressBarTextureSet(
             progressBar("textures/gui/progress_bar/progress_bar_simulation.png"));
 
-    public static final ProgressBarTextureSet PROGRESS_BAR_XP = new ProgressBarTextureSet(
-            progressBar("textures/gui/progress_bar/progress_bar_xp.png"));
+    public static final ProgressBarTextureSet PROGRESS_BAR_XP = new ProgressBarTextureSet(20,
+            ProgressDrawable.Direction.UP, progressBar("textures/gui/progress_bar/progress_bar_xp.png"));
 
     public static final ProgressBarTextureSet XP_SENSOR_BUTTON = new ProgressBarTextureSet(
             progressBar("textures/gui/widget/button_xp_sensor.png"));
