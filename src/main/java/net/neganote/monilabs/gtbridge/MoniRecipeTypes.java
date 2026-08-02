@@ -130,8 +130,8 @@ public class MoniRecipeTypes {
             .setSound(MoniSounds.MICROVERSE);
 
     public static GTRecipeType ATOMIC_RECONSTRUCTOR = GTRecipeTypes
-            .register("atomic_reconstruction", GTRecipeTypes.MULTIBLOCK)
-            .setEUIO(IO.IN) // TODO: figure out how to do .category("reconstruction")
+            .register("atomic_reconstruction", "reconstruction")
+            .setEUIO(IO.IN)
             .setMaxIOSize(1, 1, 0, 0)
             .setSound(GTSoundEntries.ELECTROLYZER)
             .UI(builder -> builder.setProgressBar(MoniGuiTextures.PROGRESS_BAR_RECONSTRUCTION)
@@ -197,6 +197,93 @@ public class MoniRecipeTypes {
                                                 recipe.data.contains("maximumXp")));
 
                     }))
+            .setSound(GTSoundEntries.CHEMICAL);
+
+    public static GTRecipeType SIMULATION_SUPERCOMPUTER_RECIPES = GTRecipeTypes
+            .register("simulation_supercomputer", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN)
+            .setMaxIOSize(2, 2, 0, 0)
+            .UI(builder -> builder.setItemSlotsOverlay(IO.IN, 0, 1, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(MoniGuiTextures.PROGRESS_BAR_SIMULATION))
+            .setSound(GTSoundEntries.ASSEMBLER);
+
+    public static GTRecipeType LOOT_SUPERFABRICATOR_RECIPES = GTRecipeTypes
+            .register("loot_superfabricator", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN)
+            .setMaxIOSize(2, 1, 0, 0)
+            .UI(builder -> builder.setItemSlotsOverlay(IO.IN, 0, 1, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(MoniGuiTextures.PROGRESS_BAR_SIMULATION))
+            .setSound(GTSoundEntries.COMPUTATION);
+
+    public static GTRecipeType ACTUALIZATION_CHAMBER_RECIPES = GTRecipeTypes
+            .register("actualization_chamber", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN)
+            .setMaxIOSize(2, 20, 0, 0)
+            .UI(builder -> builder.setItemSlotsOverlay(IO.IN, 0, 1, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(GTGuiTextures.PROGRESS_ARROW))
+            .setSound(GTSoundEntries.COOLING);
+
+    public static GTRecipeType NAQUADAH_REACTOR_RECIPES = GTRecipeTypes
+            .register("naquadah_reactor", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.OUT)
+            .setMaxIOSize(2, 2, 0, 0)
+            .UI(builder -> builder.setItemSlotsOverlay(IO.IN, 0, 1, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(GTGuiTextures.PROGRESS_ARROW))
+            .setSound(GTSoundEntries.ARC);
+
+    public static GTRecipeType LARGE_NAQUADAH_REACTOR_RECIPES = GTRecipeTypes
+            .register("large_naquadah_reactor", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.OUT)
+            .setMaxIOSize(0, 0, 1, 0)
+            .UI(builder -> builder.setProgressBar(GTGuiTextures.PROGRESS_ARROW))
+            .setSound(GTSoundEntries.ARC);
+
+    public static GTRecipeType NAQUADAH_REFINERY_RECIPES = GTRecipeTypes
+            .register("naquadah_refinery", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN)
+            .setMaxIOSize(6, 0, 5, 1)
+            .UI(builder -> builder.setItemSlotsOverlay(IO.IN, 0, 5, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(GTGuiTextures.PROGRESS_ARROW))
+            .setSound(GTSoundEntries.COOLING);
+
+    public static GTRecipeType GREENHOUSE_RECIPES = GTRecipeTypes
+            .register("greenhouse", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN)
+            .setMaxIOSize(3, 6, 1, 0)
+            .UI(builder -> builder.setItemSlotsOverlay(IO.IN, 0, 2, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(GTGuiTextures.PROGRESS_ARROW))
+            .setSound(GTSoundEntries.TURBINE);
+
+    public static GTRecipeType QUINTESSENCE_INFUSER_RECIPES = GTRecipeTypes
+            .register("quintessence_infuser", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN)
+            .setMaxIOSize(2, 2, 1, 0)
+            .UI(builder -> builder.setItemSlotsOverlay(IO.IN, 0, 1, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(MoniGuiTextures.PROGRESS_BAR_XP))
+            .setSound(GTSoundEntries.CENTRIFUGE);
+
+    public static GTRecipeType ROCK_CYCLE_SIMULATOR_RECIPES = GTRecipeTypes
+            .register("rock_cycle_simulator", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN)
+            .setMaxIOSize(1, 1, 0, 0)
+            .UI(builder -> builder.setItemSlotOverlay(IO.IN, 0, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(GTGuiTextures.PROGRESS_MACERATE))
+            .setSound(GTSoundEntries.MINER);
+
+    public static GTRecipeType DISCHARGER_RECIPES = GTRecipeTypes
+            .register("discharger", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN)
+            .setMaxIOSize(9, 1, 1, 0)
+            .UI(builder -> builder.setItemSlotsOverlay(IO.IN, 0, 8, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(GTGuiTextures.PROGRESS_ARROW))
+            .setSound(GTSoundEntries.ELECTROLYZER);
+
+    public static GTRecipeType ANTIMATTER_MANIPULATION_RECIPES = GTRecipeTypes
+            .register("antimatter_manipulation", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN)
+            .setMaxIOSize(1, 1, 3, 1)
+            .UI(builder -> builder.setItemSlotOverlay(IO.IN, 0, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(GTGuiTextures.PROGRESS_ARROW))
             .setSound(GTSoundEntries.CHEMICAL);
 
     public static void init() {}
