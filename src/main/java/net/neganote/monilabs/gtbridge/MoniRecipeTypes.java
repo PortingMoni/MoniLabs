@@ -129,6 +129,14 @@ public class MoniRecipeTypes {
                     }))
             .setSound(MoniSounds.MICROVERSE);
 
+    public static GTRecipeType ATOMIC_RECONSTRUCTOR = GTRecipeTypes
+            .register("atomic_reconstruction", GTRecipeTypes.MULTIBLOCK)
+            .setEUIO(IO.IN) // TODO: figure out how to do .category("reconstruction")
+            .setMaxIOSize(1, 1, 0, 0)
+            .setSound(GTSoundEntries.ELECTROLYZER)
+            .UI(builder -> builder.setProgressBar(MoniGuiTextures.PROGRESS_BAR_RECONSTRUCTION)
+                    .setItemSlotOverlay(IO.IN, 1, GTGuiTextures.ARROW_INPUT_OVERLAY));
+
     public static GTRecipeType ANTIMATTER_COLLIDER_RECIPES = GTRecipeTypes
             .register("anti_collider", GTRecipeTypes.MULTIBLOCK)
             .setEUIO(IO.OUT)
