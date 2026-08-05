@@ -14,21 +14,17 @@ import net.neganote.monilabs.common.machine.multiblock.MicroverseProjectorMachin
 import brachy.modularui.api.drawable.Text;
 import brachy.modularui.factory.PosGuiData;
 import brachy.modularui.screen.UISettings;
-import brachy.modularui.value.BoolValue;
 import brachy.modularui.value.sync.BooleanSyncValue;
 import brachy.modularui.value.sync.EnumSyncValue;
 import brachy.modularui.value.sync.PanelSyncManager;
 import brachy.modularui.widget.ParentWidget;
 import brachy.modularui.widgets.ToggleButton;
 import brachy.modularui.widgets.layout.Flow;
-import brachy.modularui.widgets.menu.ContextMenuButton;
+import brachy.modularui.widgets.menu.DropdownWidget;
 import com.mojang.blaze3d.MethodsReturnNonnullByDefault;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.List;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -73,10 +69,6 @@ public class AdvancedMicroverseTypeSensorHatchPartMachine extends MicroverseType
         }
     }
 
-    private static List<String> displayNames = Arrays.stream(Microverse.values())
-            .map(Microverse::getDisplayName)
-            .toList();
-
     @Override
     public void buildMainUI(ParentWidget<?> mainWidget, PosGuiData guiData, PanelSyncManager syncManager,
                             UISettings settings) {
@@ -86,37 +78,34 @@ public class AdvancedMicroverseTypeSensorHatchPartMachine extends MicroverseType
         BooleanSyncValue isInvertedSyncValue = new BooleanSyncValue(this::isInverted, this::setInverted).allowC2S();
         syncManager.syncValue("isInverted", isInvertedSyncValue);
 
-        mainWidget.child(Flow.col()
-                .child(Text.lang("gui.advanced_chroma_sensor.display").asWidget()))
-                .child(new ContextMenuButton<>("chromaList")
-                        .menuList(l -> l.height(60)
-                                .children(Microverse.values().length, i -> microverseButton(microverseSyncValue, i))))
-                .child(new ToggleButton()
-                        .value(isInvertedSyncValue)
-                        .overlay(false, GTGuiTextures.OVERLAY_REDSTONE_OFF)
-                        .overlay(true, GTGuiTextures.OVERLAY_REDSTONE_ON)
-                        .tooltipDynamic(t -> {
-                            if (isInvertedSyncValue.getBoolValue()) {
-                                t.add(Component.translatable("gui.advanced_type_sensor.invert.enabled.0"));
-                                t.add(Component.translatable("gui.advanced_type_sensor.invert.enabled.1"));
-                                t.add(Component.translatable("gui.advanced_type_sensor.invert.enabled.2"));
-                                t.add(Component.translatable("gui.advanced_type_sensor.invert.enabled.3"));
-                            } else {
-                                t.add(Component.translatable("gui.advanced_type_sensor.invert.disabled.0"));
-                                t.add(Component.translatable("gui.advanced_type_sensor.invert.disabled.1"));
-                                t.add(Component.translatable("gui.advanced_type_sensor.invert.disabled.2"));
-                                t.add(Component.translatable("gui.advanced_type_sensor.invert.disabled.3"));
-                            }
-                        }));
-    }
-
-    private brachy.modularui.widget.Widget<?> microverseButton(EnumSyncValue<Microverse> syncValue, int i) {
-        return new ToggleButton().size(18)
-                .value(boolValueOf(syncValue, Microverse.values()[i]))
-                .overlay(Text.str(displayNames.get(i)));
-    }
-
-    BoolValue.Dynamic boolValueOf(EnumSyncValue<Microverse> syncValue, Microverse value) {
-        return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
+        mainWidget.coverChildren()
+                .child(Flow.row()
+                        .coverChildren()
+                        .margin(6, 8)
+                        .childPadding(4)
+                        .child(Text.lang("gui.advanced_chroma_sensor.display").asWidget())
+                        .child(new DropdownWidget<>("microverseList", Microverse.class)
+                                .size(90, 18)
+                                .value(microverseSyncValue)
+                                .options(Microverse.MICROVERSES)
+                                .maxVerticalMenuSize(80)
+                                .optionToWidget((microverse, forSelected) -> Text.str(microverse.getDisplayName())
+                                        .asWidget()
+                                        .center()
+                                        .padding(2)))
+                        .child(new ToggleButton()
+                                .size(18)
+                                .value(isInvertedSyncValue)
+                                .overlay(false, GTGuiTextures.OVERLAY_REDSTONE_OFF)
+                                .overlay(true, GTGuiTextures.OVERLAY_REDSTONE_ON)
+                                .tooltipAutoUpdate(true)
+                                .tooltipDynamic(t -> {
+                                    String key = isInvertedSyncValue.getBoolValue() ?
+                                            "gui.advanced_type_sensor.invert.enabled." :
+                                            "gui.advanced_type_sensor.invert.disabled.";
+                                    for (int i = 0; i < 4; i++) {
+                                        t.add(Component.translatable(key + i));
+                                    }
+                                })));
     }
 }

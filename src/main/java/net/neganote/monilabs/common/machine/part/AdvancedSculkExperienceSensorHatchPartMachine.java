@@ -3,6 +3,7 @@ package net.neganote.monilabs.common.machine.part;
 import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.feature.IMuiMachine;
 import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
+import com.gregtechceu.gtceu.api.sync_system.annotations.SyncToClient;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
 import net.minecraft.core.Direction;
@@ -13,6 +14,7 @@ import net.neganote.monilabs.common.machine.multiblock.SculkVatMachine;
 import brachy.modularui.api.drawable.Text;
 import brachy.modularui.factory.PosGuiData;
 import brachy.modularui.screen.UISettings;
+import brachy.modularui.utils.Alignment;
 import brachy.modularui.value.IntValue;
 import brachy.modularui.value.sync.BooleanSyncValue;
 import brachy.modularui.value.sync.IntSyncValue;
@@ -34,21 +36,25 @@ public class AdvancedSculkExperienceSensorHatchPartMachine extends SculkExperien
                                                            implements IMuiMachine {
 
     @SaveField
+    @SyncToClient
     @Setter
     @Getter
     public int minPercent = 33, maxPercent = 66;
 
     @SaveField
+    @SyncToClient
     @Setter
     @Getter
     public int minValue = 1000, maxValue = 10000;
 
     @SaveField
+    @SyncToClient
     @Setter
     @Getter
     public boolean inverted;
 
     @SaveField
+    @SyncToClient
     @Setter
     @Getter
     public boolean usesPercent = true;
@@ -96,72 +102,76 @@ public class AdvancedSculkExperienceSensorHatchPartMachine extends SculkExperien
         IntSyncValue maxValueSyncValue = new IntSyncValue(this::getMaxValue, this::setMaxValue).allowC2S();
         syncManager.syncValue("maxValue", maxValueSyncValue);
 
-        mainWidget.child(Flow.col()
-                .child(new ToggleButton()
-                        .value(isInvertedSyncValue)
-                        .overlay(false, GTGuiTextures.OVERLAY_REDSTONE_OFF)
-                        .overlay(true, GTGuiTextures.OVERLAY_REDSTONE_ON)
-                        .tooltipDynamic(t -> {
-                            if (isInvertedSyncValue.getBoolValue()) {
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.invert.enabled.0"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.invert.enabled.1"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.invert.enabled.2"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.invert.enabled.3"));
-                            } else {
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.invert.disabled.0"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.invert.disabled.1"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.invert.disabled.2"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.invert.disabled.3"));
-                            }
-                        }))
-                .child(new ToggleButton()
-                        .value(usesPercentSyncValue)
-                        .overlay(MoniGuiTextures.XP_SENSOR_BUTTON.main())
-                        .tooltipDynamic(t -> {
-                            if (isInvertedSyncValue.getBoolValue()) {
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.mode_toggle.enabled.0"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.mode_toggle.enabled.1"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.mode_toggle.enabled.2"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.mode_toggle.enabled.3"));
-                            } else {
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.mode_toggle.disabled.0"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.mode_toggle.disabled.1"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.mode_toggle.disabled.2"));
-                                t.add(Component.translatable("gui.monilabs.xp_sensor.mode_toggle.disabled.3"));
-                            }
-                        }))
-                .child(Text.dynamic(() -> usesPercentSyncValue.getBoolValue() ?
-                        Component.translatable("gui.monilabs.xp_sensor.mode_percentage") :
-                        Component.translatable("gui.monilabs.xp_sensor.mode_raw_amount")).asWidget())
-                .child(Text.lang("gui.monilabs.xp_sensor.min").asWidget())
+        mainWidget.coverChildren()
+                .child(Flow.col()
+                        .coverChildren()
+                        .margin(6, 6)
+                        .childPadding(3)
+                        .crossAxisAlignment(Alignment.CrossAxis.START)
+                        .child(Flow.row()
+                                .coverChildren()
+                                .childPadding(3)
+                                .child(new ToggleButton()
+                                        .size(18)
+                                        .value(isInvertedSyncValue)
+                                        .overlay(false, GTGuiTextures.OVERLAY_REDSTONE_OFF)
+                                        .overlay(true, GTGuiTextures.OVERLAY_REDSTONE_ON)
+                                        .tooltipAutoUpdate(true)
+                                        .tooltipDynamic(t -> {
+                                            String key = isInvertedSyncValue.getBoolValue() ?
+                                                    "gui.monilabs.xp_sensor.invert.enabled." :
+                                                    "gui.monilabs.xp_sensor.invert.disabled.";
+                                            for (int i = 0; i < 4; i++) {
+                                                t.add(Component.translatable(key + i));
+                                            }
+                                        }))
+                                .child(new ToggleButton()
+                                        .size(18)
+                                        .value(usesPercentSyncValue)
+                                        .overlay(false, MoniGuiTextures.XP_SENSOR_BUTTON_RAW)
+                                        .overlay(true, MoniGuiTextures.XP_SENSOR_BUTTON_PERCENT)
+                                        .tooltipAutoUpdate(true)
+                                        .tooltipDynamic(t -> {
+                                            String key = usesPercentSyncValue.getBoolValue() ?
+                                                    "gui.monilabs.xp_sensor.mode_toggle.enabled." :
+                                                    "gui.monilabs.xp_sensor.mode_toggle.disabled.";
+                                            for (int i = 0; i < 4; i++) {
+                                                t.add(Component.translatable(key + i));
+                                            }
+                                        }))
+                                .child(Text.dynamic(() -> usesPercentSyncValue.getBoolValue() ?
+                                        Component.translatable("gui.monilabs.xp_sensor.mode_percentage") :
+                                        Component.translatable("gui.monilabs.xp_sensor.mode_raw_amount"))
+                                        .asWidget()
+                                        .marginLeft(2)))
+                        .child(thresholdRow("gui.monilabs.xp_sensor.min", usesPercentSyncValue,
+                                minPercentSyncValue, minValueSyncValue, "gui.monilabs.xp_sensor.min_threshold"))
+                        .child(thresholdRow("gui.monilabs.xp_sensor.max", usesPercentSyncValue,
+                                maxPercentSyncValue, maxValueSyncValue, "gui.monilabs.xp_sensor.max_threshold")));
+    }
+
+    private static Flow thresholdRow(String labelKey, BooleanSyncValue usesPercent, IntSyncValue percentValue,
+                                     IntSyncValue rawValue, String tooltipKey) {
+        return Flow.row()
+                .coverChildren()
+                .childPadding(4)
+                .mainAxisAlignment(Alignment.MainAxis.START)
+                .child(Text.lang(labelKey).asWidget().width(30))
                 .child(new TextFieldWidget()
+                        .size(60, 16)
+                        .setTextAlignment(Alignment.CENTER)
                         .value(new IntValue.Dynamic(
-                                () -> usesPercentSyncValue.getBoolValue() ? minPercentSyncValue.getIntValue() :
-                                        minValueSyncValue.getIntValue(),
+                                () -> usesPercent.getBoolValue() ? percentValue.getIntValue() : rawValue.getIntValue(),
                                 val -> {
-                                    if (usesPercentSyncValue.getBoolValue()) {
-                                        minPercentSyncValue.setIntValue(val);
+                                    if (usesPercent.getBoolValue()) {
+                                        percentValue.setIntValue(val);
                                     } else {
-                                        minValueSyncValue.setIntValue(val);
+                                        rawValue.setIntValue(val);
                                     }
                                 }))
                         .setNumbers(() -> 0,
-                                () -> usesPercentSyncValue.getBoolValue() ? 100 : SculkVatMachine.XP_BUFFER_MAX)
-                        .tooltip(t -> t.add(Component.translatable("gui.monilabs.xp_sensor.min_threshold"))))
-                .child(Text.lang("gui.monilabs.xp_sensor.max").asWidget())
-                .child(new TextFieldWidget()
-                        .value(new IntValue.Dynamic(
-                                () -> usesPercentSyncValue.getBoolValue() ? maxPercentSyncValue.getIntValue() :
-                                        maxValueSyncValue.getIntValue(),
-                                val -> {
-                                    if (usesPercentSyncValue.getBoolValue()) {
-                                        maxPercentSyncValue.setIntValue(val);
-                                    } else {
-                                        maxValueSyncValue.setIntValue(val);
-                                    }
-                                }))
-                        .setNumbers(() -> 0,
-                                () -> usesPercentSyncValue.getBoolValue() ? 100 : SculkVatMachine.XP_BUFFER_MAX)
-                        .tooltip(t -> t.add(Component.translatable("gui.monilabs.xp_sensor.max_threshold")))));
+                                () -> usesPercent.getBoolValue() ? 100 : SculkVatMachine.XP_BUFFER_MAX)
+                        .setDefaultNumber(0)
+                        .tooltip(t -> t.add(Component.translatable(tooltipKey))));
     }
 }
