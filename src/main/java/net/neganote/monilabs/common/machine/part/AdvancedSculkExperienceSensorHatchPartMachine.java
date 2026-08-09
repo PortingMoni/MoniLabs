@@ -3,7 +3,6 @@ package net.neganote.monilabs.common.machine.part;
 import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.feature.IMuiMachine;
 import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
-import com.gregtechceu.gtceu.api.sync_system.annotations.SyncToClient;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
 import net.minecraft.core.Direction;
@@ -36,25 +35,21 @@ public class AdvancedSculkExperienceSensorHatchPartMachine extends SculkExperien
                                                            implements IMuiMachine {
 
     @SaveField
-    @SyncToClient
     @Setter
     @Getter
     public int minPercent = 33, maxPercent = 66;
 
     @SaveField
-    @SyncToClient
     @Setter
     @Getter
     public int minValue = 1000, maxValue = 10000;
 
     @SaveField
-    @SyncToClient
     @Setter
     @Getter
     public boolean inverted;
 
     @SaveField
-    @SyncToClient
     @Setter
     @Getter
     public boolean usesPercent = true;

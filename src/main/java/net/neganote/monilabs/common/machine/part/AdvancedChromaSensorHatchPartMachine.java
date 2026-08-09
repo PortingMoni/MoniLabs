@@ -3,7 +3,6 @@ package net.neganote.monilabs.common.machine.part;
 import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.feature.IMuiMachine;
 import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
-import com.gregtechceu.gtceu.api.sync_system.annotations.SyncToClient;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
 import net.minecraft.core.Direction;
@@ -35,13 +34,11 @@ public class AdvancedChromaSensorHatchPartMachine extends ChromaSensorHatchPartM
     @Setter
     @Getter
     @SaveField
-    @SyncToClient
     public Color detectorColor = Color.RED;
 
     @Setter
     @Getter
     @SaveField
-    @SyncToClient
     public boolean inverted = false;
 
     public AdvancedChromaSensorHatchPartMachine(BlockEntityCreationInfo info) {
