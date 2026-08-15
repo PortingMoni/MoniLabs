@@ -6,12 +6,14 @@ import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.neganote.monilabs.common.machine.multiblock.MicroverseProjectorMachine;
 
 import brachy.modularui.api.drawable.Text;
 import brachy.modularui.factory.PosGuiData;
 import brachy.modularui.screen.UISettings;
+import brachy.modularui.utils.Alignment;
 import brachy.modularui.value.sync.BooleanSyncValue;
 import brachy.modularui.value.sync.IntSyncValue;
 import brachy.modularui.value.sync.PanelSyncManager;
@@ -84,26 +86,56 @@ public class AdvancedMicroverseStabilitySensorHatchPartMachine extends Microvers
     @Override
     public void buildMainUI(ParentWidget<?> mainWidget, PosGuiData guiData, PanelSyncManager syncManager,
                             UISettings settings) {
-        Flow column = Flow.column()
-                .child(new ToggleButton()
-                        .value(new BooleanSyncValue(this::isInverted, this::setInverted).allowC2S())
-                        .overlay(false, GTGuiTextures.OVERLAY_REDSTONE_OFF)
-                        .overlay(true, GTGuiTextures.OVERLAY_REDSTONE_ON)
-                        .tooltip(t -> t.add("gui.monilabs.microverse_stability_sensor.invert")))
-                .child(Flow.row()
-                        .child(Text.lang("gui.monilabs.microverse_stability.min").asWidget())
-                        .child(new TextFieldWidget()
-                                .setNumbers(0, 100)
-                                .value(new IntSyncValue(() -> minPercent,
-                                        val -> minPercent = Mth.clamp(minPercent, 0, 100)).allowC2S())
-                                .tooltip(t -> t.add("gui.monilabs.microverse_stability.min_threshold"))))
-                .child(Flow.row()
-                        .child(Text.lang("gui.monilabs.microverse_stability.max").asWidget())
-                        .child(new TextFieldWidget()
-                                .setNumbers(0, 100)
-                                .value(new IntSyncValue(() -> maxPercent,
-                                        val -> maxPercent = Mth.clamp(maxPercent, 0, 100)).allowC2S())
-                                .tooltip(t -> t.add("gui.monilabs.microverse_stability.max_threshold"))));
-        mainWidget.child(column);
+        BooleanSyncValue isInvertedSyncValue = new BooleanSyncValue(this::isInverted, this::setInverted).allowC2S();
+        syncManager.syncValue("isInverted", isInvertedSyncValue);
+        IntSyncValue minPercentSyncValue = new IntSyncValue(this::getMinPercent,
+                val -> setMinPercent(Mth.clamp(val, 0, 100))).allowC2S();
+        syncManager.syncValue("minPercent", minPercentSyncValue);
+        IntSyncValue maxPercentSyncValue = new IntSyncValue(this::getMaxPercent,
+                val -> setMaxPercent(Mth.clamp(val, 0, 100))).allowC2S();
+        syncManager.syncValue("maxPercent", maxPercentSyncValue);
+
+        mainWidget.coverChildren()
+                .child(Flow.col()
+                        .coverChildren()
+                        .margin(6, 6)
+                        .childPadding(3)
+                        .crossAxisAlignment(Alignment.CrossAxis.START)
+                        .child(Flow.row()
+                                .coverChildren()
+                                .childPadding(3)
+                                .child(new ToggleButton()
+                                        .size(18)
+                                        .value(isInvertedSyncValue)
+                                        .overlay(false, GTGuiTextures.OVERLAY_REDSTONE_OFF)
+                                        .overlay(true, GTGuiTextures.OVERLAY_REDSTONE_ON)
+                                        .tooltipAutoUpdate(true)
+                                        .tooltipDynamic(t -> {
+                                            String key = isInvertedSyncValue.getBoolValue() ?
+                                                    "gui.monilabs.microverse_stability_sensor.invert.enabled." :
+                                                    "gui.monilabs.microverse_stability_sensor.invert.disabled.";
+                                            for (int i = 0; i < 4; i++) {
+                                                t.add(Component.translatable(key + i));
+                                            }
+                                        })))
+                        .child(thresholdRow("gui.monilabs.microverse_stability.min", minPercentSyncValue,
+                                "gui.monilabs.microverse_stability.min_threshold"))
+                        .child(thresholdRow("gui.monilabs.microverse_stability.max", maxPercentSyncValue,
+                                "gui.monilabs.microverse_stability.max_threshold")));
+    }
+
+    private static Flow thresholdRow(String labelKey, IntSyncValue value, String tooltipKey) {
+        return Flow.row()
+                .coverChildren()
+                .childPadding(4)
+                .mainAxisAlignment(Alignment.MainAxis.START)
+                .child(Text.lang(labelKey).asWidget().width(30))
+                .child(new TextFieldWidget()
+                        .size(60, 16)
+                        .setTextAlignment(Alignment.CENTER)
+                        .value(value)
+                        .setNumbers(() -> 0, () -> 100)
+                        .setDefaultNumber(0)
+                        .tooltip(t -> t.add(Component.translatable(tooltipKey))));
     }
 }
