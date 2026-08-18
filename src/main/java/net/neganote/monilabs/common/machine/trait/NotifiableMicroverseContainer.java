@@ -36,7 +36,7 @@ public class NotifiableMicroverseContainer extends NotifiableRecipeHandlerTrait<
                                                        boolean simulate) {
         Microverse recipeMicroverse = left.get(0);
         if (getHeldMicroverse() == recipeMicroverse) {
-            return null;
+            return List.of();
         }
         return left;
     }

@@ -266,7 +266,7 @@ public class MicroverseProjectorMachine extends WorkableElectricMultiblockMachin
         List<IWidget> list = super.getWidgetsForDisplay(syncManager);
         list.add(Text
                 .dynamic(() -> Component.translatable("microverse.monilabs.current_microverse",
-                        microverseLangKey.getStringValue()))
+                        Component.translatable(microverseLangKey.getStringValue())))
                 .asWidget()
                 .setEnabledIf(w -> isFormed.getBoolValue()));
         list.add(Text
