@@ -93,13 +93,13 @@ public class SculkVatRender extends DynamicRender<SculkVatMachine, SculkVatRende
             poseStack.pushPose();
             var pose = poseStack.last();
 
-            var dir = face.getRelativeFacing(sculkVat.self().getFrontFacing(), sculkVat.self().getUpwardsFacing(),
-                    sculkVat.self().isFlipped());
+            var dir = face.getRelativeFacing(sculkVat.getFrontFacing(), sculkVat.getUpwardsFacing(),
+                    sculkVat.isFlipped());
             if (dir.getAxis() != Direction.Axis.Y) dir = dir.getOpposite();
 
             fluidBlockRenderer.drawPlane(dir, sculkVat.getTrait(MultiblockFluidRendererTrait.class)
                     .getFluidOffsets(), poseStack, consumer, cachedFluid,
-                    RenderUtil.FluidTextureType.STILL, packedOverlay, sculkVat.self().getBlockPos(),
+                    RenderUtil.FluidTextureType.STILL, packedOverlay, sculkVat.getBlockPos(),
                     sculkVat.getLevel());
 
             poseStack.popPose();
