@@ -38,6 +38,7 @@ public class MoniRecipeModifiers {
                     .filter(NotifiableFluidTank.class::isInstance)
                     .map(NotifiableFluidTank.class::cast)
                     .toList();
+            if (tanks.isEmpty()) return ModifierFunction.NULL;
             var stored = tanks.get(0).getFluidInTank(0).getAmount();
             var capacity = tanks.get(0).getTankCapacity(0);
             double x = (double) stored / capacity;
