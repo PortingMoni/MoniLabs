@@ -1,7 +1,5 @@
 package net.neganote.monilabs.gtbridge;
 
-import brachy.modularui.utils.Alignment;
-import brachy.modularui.widgets.layout.Flow;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.gui.GTRecipeViewerWidget;
@@ -10,7 +8,6 @@ import com.gregtechceu.gtceu.common.data.GTSoundEntries;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
 import net.minecraft.network.chat.Component;
-import net.neganote.monilabs.capability.recipe.ChromaRecipeCapability;
 import net.neganote.monilabs.capability.recipe.MoniRecipeCapabilities;
 import net.neganote.monilabs.client.gui.MoniGuiTextures;
 import net.neganote.monilabs.common.data.MoniSounds;
@@ -19,6 +16,8 @@ import net.neganote.monilabs.common.machine.multiblock.Microverse;
 import net.neganote.monilabs.common.machine.multiblock.MicroverseProjectorMachine;
 
 import brachy.modularui.api.drawable.Text;
+import brachy.modularui.utils.Alignment;
+import brachy.modularui.widgets.layout.Flow;
 
 @SuppressWarnings("unused")
 public class MoniRecipeTypes {
@@ -66,10 +65,11 @@ public class MoniRecipeTypes {
                                 }
                                 for (int i = 0; i < outputStatesCount; i++) {
                                     strBuilder.append(Component.translatable(
-                                            Color.getColorFromKey(data.getInt("output_states_" + i)).nameKey).getString());
+                                            Color.getColorFromKey(data.getInt("output_states_" + i)).nameKey)
+                                            .getString());
                                     if (i % 3 == 2) {
                                         strBuilder.append("\n");
-                                    } else if (i != outputStatesCount-1) {
+                                    } else if (i != outputStatesCount - 1) {
                                         strBuilder.append(
                                                 Component.translatable("monilabs.recipe.color_list_separator")
                                                         .getString());
@@ -79,14 +79,17 @@ public class MoniRecipeTypes {
                                 return Component.literal(strBuilder.toString());
                             }).asWidget());
                         })
-                        .setRecipeViewerLayoutCapabilityLayoutBuilder(MoniRecipeCapabilities.CHROMA, (layout, widget, io) -> {
-                            if (layout.getRecipeType().getMaxSlots(MoniRecipeCapabilities.CHROMA, io) == 0) return;
-                            widget.textComponents.child(Flow.col()
-                                    .crossAxisAlignment(Alignment.CrossAxis.START)
-                                    .coverChildrenHeight()
-                                    .widthRel(1f)
-                                    .name(GTRecipeViewerWidget.capabilityWidgetName(MoniRecipeCapabilities.CHROMA, io, 0)));
-                        })
+                        .setRecipeViewerLayoutCapabilityLayoutBuilder(MoniRecipeCapabilities.CHROMA,
+                                (layout, widget, io) -> {
+                                    if (layout.getRecipeType().getMaxSlots(MoniRecipeCapabilities.CHROMA, io) == 0)
+                                        return;
+                                    widget.textComponents.child(Flow.col()
+                                            .crossAxisAlignment(Alignment.CrossAxis.START)
+                                            .coverChildrenHeight()
+                                            .widthRel(1f)
+                                            .name(GTRecipeViewerWidget
+                                                    .capabilityWidgetName(MoniRecipeCapabilities.CHROMA, io, 0)));
+                                })
                         .setCapabilityContentBuilder(MoniRecipeCapabilities.CHROMA,
                                 MoniRecipeCapabilities.CHROMA::buildXEIWidgetContent))
                 .setMaxTooltips(8)
@@ -143,14 +146,17 @@ public class MoniRecipeTypes {
                                         .setEnabledIf(w -> recipe.data.contains("blacklistParallel") &&
                                                 recipe.data.getBoolean("blacklistParallel")));
                     })
-                    .setRecipeViewerLayoutCapabilityLayoutBuilder(MoniRecipeCapabilities.MICROVERSE, (layout, widget, io) -> {
-                        if (layout.getRecipeType().getMaxSlots(MoniRecipeCapabilities.MICROVERSE, io) == 0) return;
-                        widget.textComponents.child(Flow.col()
-                                .crossAxisAlignment(Alignment.CrossAxis.START)
-                                .coverChildrenHeight()
-                                .widthRel(1f)
-                                .name(GTRecipeViewerWidget.capabilityWidgetName(MoniRecipeCapabilities.MICROVERSE, io, 0)));
-                    })
+                    .setRecipeViewerLayoutCapabilityLayoutBuilder(MoniRecipeCapabilities.MICROVERSE,
+                            (layout, widget, io) -> {
+                                if (layout.getRecipeType().getMaxSlots(MoniRecipeCapabilities.MICROVERSE, io) == 0)
+                                    return;
+                                widget.textComponents.child(Flow.col()
+                                        .crossAxisAlignment(Alignment.CrossAxis.START)
+                                        .coverChildrenHeight()
+                                        .widthRel(1f)
+                                        .name(GTRecipeViewerWidget
+                                                .capabilityWidgetName(MoniRecipeCapabilities.MICROVERSE, io, 0)));
+                            })
                     .setCapabilityContentBuilder(MoniRecipeCapabilities.MICROVERSE,
                             (widget, content, io, perTick, recipeType, recipe, chanceTier, recipeTier) -> {
                                 if (!(widget instanceof Flow flow)) return;

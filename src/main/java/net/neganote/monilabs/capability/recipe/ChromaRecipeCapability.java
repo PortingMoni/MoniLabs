@@ -1,8 +1,5 @@
 package net.neganote.monilabs.capability.recipe;
 
-import brachy.modularui.api.drawable.Text;
-import brachy.modularui.api.widget.IWidget;
-import brachy.modularui.widgets.layout.Flow;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
@@ -14,6 +11,9 @@ import net.minecraft.network.chat.Component;
 import net.neganote.monilabs.MoniLabs;
 import net.neganote.monilabs.common.machine.multiblock.Color;
 
+import brachy.modularui.api.drawable.Text;
+import brachy.modularui.api.widget.IWidget;
+import brachy.modularui.widgets.layout.Flow;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Codec;
@@ -37,7 +37,7 @@ public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
     }
 
     public void buildXEIWidgetContent(IWidget widget, Content content, IO io, boolean perTick,
-                                      GTRecipeType recipeType, GTRecipe recipe, int chanceTier, int recipeTier){
+                                      GTRecipeType recipeType, GTRecipe recipe, int chanceTier, int recipeTier) {
         if (!(widget instanceof Flow flow)) return;
 
         Color inputColor = ((ChromaIngredient) content.content()).color();
@@ -59,7 +59,7 @@ public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
             if (key != null)
                 flow.child(Text.lang(key).asWidget());
             else if (inputColor.isTypeNotColor()) {
-                int color=0;
+                int color = 0;
                 switch (inputColor) {
                     case NOT_RED -> color = Color.RED.integerColor;
                     case NOT_ORANGE -> color = Color.ORANGE.integerColor;
