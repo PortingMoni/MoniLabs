@@ -26,20 +26,6 @@ public class MicroverseRecipeCapability extends RecipeCapability<Microverse> {
         return true;
     }
 
-    /*
-     * spotless:off
-    // TODO: When we add recipe capability XEI info options, add this back
-    @Override
-    public void addXEIInfo(WidgetGroup group, int xOffset, GTRecipe recipe, List<Content> contents, boolean perTick,
-                           boolean isInput, MutableInt yOffset) {
-        Microverse microverse = (Microverse) contents.get(0).getContent();
-        group.addWidget(
-                new LabelWidget(xOffset + 3, yOffset.addAndGet(10), I18n.get("emi_info.monilabs.required_microverse",
-                        I18n.get(microverse.langKey))));
-        super.addXEIInfo(group, xOffset, recipe, contents, perTick, isInput, yOffset);
-    }
-    // spotless:on
-     */
     private static class SerializerMicroverse implements IContentSerializer<Microverse> {
 
         public static SerializerMicroverse INSTANCE = new SerializerMicroverse();

@@ -1,11 +1,19 @@
 package net.neganote.monilabs.capability.recipe;
 
+import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
+import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
+import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.content.IContentSerializer;
 
+import net.minecraft.network.chat.Component;
 import net.neganote.monilabs.MoniLabs;
 import net.neganote.monilabs.common.machine.multiblock.Color;
 
+import brachy.modularui.api.drawable.Text;
+import brachy.modularui.api.widget.IWidget;
+import brachy.modularui.widgets.layout.Flow;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Codec;
@@ -28,65 +36,51 @@ public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
         return content;
     }
 
-    /*
-     * spotless:off
-    // TODO: When we add recipe capability XEI info options, add this back
-    @Override
-    public void addXEIInfo(WidgetGroup group, int xOffset, GTRecipe recipe, List<Content> contents, boolean perTick,
-                           boolean isInput, MutableInt yOffset) {
-        if (contents.size() != 1) {
-            group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
-                    LocalizationUtils.format("monilabs.recipe.mistake_input_colors")));
-        } else {
-            Color inputColor = ((ChromaIngredient) contents.get(0).content()).color();
-            if (inputColor.isRealColor()) {
-                group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
-                        LocalizationUtils.format("monilabs.recipe.required_color",
-                                LocalizationUtils.format(inputColor.nameKey))));
-            } else {
-                group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
-                        LocalizationUtils.format("monilabs.recipe.accepted_colors")));
-                if (inputColor == Color.PRIMARY) {
-                    group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
-                            LocalizationUtils.format("monilabs.recipe.primary_input")));
-                } else if (inputColor == Color.SECONDARY) {
-                    group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
-                            LocalizationUtils.format("monilabs.recipe.secondary_input")));
-                } else if (inputColor == Color.BASIC) {
-                    group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
-                            LocalizationUtils.format("monilabs.recipe.basic_input")));
-                } else if (inputColor == Color.TERTIARY) {
-                    group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
-                            LocalizationUtils.format("monilabs.recipe.tertiary_input")));
-                } else if (inputColor == Color.ANY) {
-                    group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
-                            LocalizationUtils.format("monilabs.recipe.any_input_color")));
-                } else if (inputColor.isTypeNotColor()) {
-                    String formatted = "";
-                    switch (inputColor) {
-                        case NOT_RED -> formatted = LocalizationUtils.format(Color.RED.nameKey);
-                        case NOT_ORANGE -> formatted = LocalizationUtils.format(Color.ORANGE.nameKey);
-                        case NOT_YELLOW -> formatted = LocalizationUtils.format(Color.YELLOW.nameKey);
-                        case NOT_LIME -> formatted = LocalizationUtils.format(Color.LIME.nameKey);
-                        case NOT_GREEN -> formatted = LocalizationUtils.format(Color.GREEN.nameKey);
-                        case NOT_TEAL -> formatted = LocalizationUtils.format(Color.TEAL.nameKey);
-                        case NOT_CYAN -> formatted = LocalizationUtils.format(Color.CYAN.nameKey);
-                        case NOT_AZURE -> formatted = LocalizationUtils.format(Color.AZURE.nameKey);
-                        case NOT_BLUE -> formatted = LocalizationUtils.format(Color.BLUE.nameKey);
-                        case NOT_INDIGO -> formatted = LocalizationUtils.format(Color.INDIGO.nameKey);
-                        case NOT_MAGENTA -> formatted = LocalizationUtils.format(Color.MAGENTA.nameKey);
-                        case NOT_PINK -> formatted = LocalizationUtils.format(Color.PINK.nameKey);
-                    }
-                    group.addWidget(new LabelWidget(xOffset + 3, yOffset.addAndGet(10),
-                            LocalizationUtils.format("monilabs.recipe.input_color_not",
-                                    formatted)));
-                }
-            }
+    public void buildXEIWidgetContent(IWidget widget, Content content, IO io, boolean perTick,
+                                      GTRecipeType recipeType, GTRecipe recipe, int chanceTier, int recipeTier) {
+        if (!(widget instanceof Flow flow)) return;
 
+        Color inputColor = ((ChromaIngredient) content.content()).color();
+        if (inputColor.isRealColor()) {
+            flow.child(Text.lang("monilabs.recipe.required_color",
+                    inputColor.getColoredDisplayName())
+                    .asWidget());
+        } else {
+            flow.child(Text.lang("monilabs.recipe.accepted_colors")
+                    .asWidget());
+            String key = null;
+            switch (inputColor) {
+                case PRIMARY -> key = "monilabs.recipe.primary_input";
+                case SECONDARY -> key = "monilabs.recipe.secondary_input";
+                case BASIC -> key = "monilabs.recipe.basic_input";
+                case TERTIARY -> key = "monilabs.recipe.tertiary_input";
+                case ANY -> key = "monilabs.recipe.any_input_color";
+            }
+            if (key != null)
+                flow.child(Text.lang(key).asWidget());
+            else if (inputColor.isTypeNotColor()) {
+                int color = 0;
+                switch (inputColor) {
+                    case NOT_RED -> color = Color.RED.integerColor;
+                    case NOT_ORANGE -> color = Color.ORANGE.integerColor;
+                    case NOT_YELLOW -> color = Color.YELLOW.integerColor;
+                    case NOT_LIME -> color = Color.LIME.integerColor;
+                    case NOT_GREEN -> color = Color.GREEN.integerColor;
+                    case NOT_TEAL -> color = Color.TEAL.integerColor;
+                    case NOT_CYAN -> color = Color.CYAN.integerColor;
+                    case NOT_AZURE -> color = Color.AZURE.integerColor;
+                    case NOT_BLUE -> color = Color.BLUE.integerColor;
+                    case NOT_INDIGO -> color = Color.INDIGO.integerColor;
+                    case NOT_MAGENTA -> color = Color.MAGENTA.integerColor;
+                    case NOT_PINK -> color = Color.PINK.integerColor;
+                }
+
+                flow.child(Text.lang("monilabs.recipe.input_color_not", Component.translatable(inputColor.nameKey))
+                        .color(color)
+                        .asWidget());
+            }
         }
     }
-    // spotless:on
-     */
 
     private static class SerializerColor implements IContentSerializer<ChromaIngredient> {
 
