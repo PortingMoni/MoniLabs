@@ -66,10 +66,10 @@ public class MoniRecipeTypes {
                                 }
                                 for (int i = 0; i < outputStatesCount; i++) {
                                     strBuilder.append(Component.translatable(
-                                            Color.getColorFromKey(data.getInt("output_states_" + i)).nameKey));
+                                            Color.getColorFromKey(data.getInt("output_states_" + i)).nameKey).getString());
                                     if (i % 3 == 2) {
                                         strBuilder.append("\n");
-                                    } else {
+                                    } else if (i != outputStatesCount-1) {
                                         strBuilder.append(
                                                 Component.translatable("monilabs.recipe.color_list_separator")
                                                         .getString());
@@ -78,8 +78,17 @@ public class MoniRecipeTypes {
                                 }
                                 return Component.literal(strBuilder.toString());
                             }).asWidget());
-                        }))
-
+                        })
+                        .setRecipeViewerLayoutCapabilityLayoutBuilder(MoniRecipeCapabilities.CHROMA, (layout, widget, io) -> {
+                            if (layout.getRecipeType().getMaxSlots(MoniRecipeCapabilities.CHROMA, io) == 0) return;
+                            widget.textComponents.child(Flow.col()
+                                    .crossAxisAlignment(Alignment.CrossAxis.START)
+                                    .coverChildrenHeight()
+                                    .widthRel(1f)
+                                    .name(GTRecipeViewerWidget.capabilityWidgetName(MoniRecipeCapabilities.CHROMA, io, 0)));
+                        })
+                        .setCapabilityContentBuilder(MoniRecipeCapabilities.CHROMA,
+                                MoniRecipeCapabilities.CHROMA::buildXEIWidgetContent))
                 .setMaxTooltips(8)
                 .setMaxIOSize(3, 3, 1, 1)
                 .setEUIO(IO.IN);
