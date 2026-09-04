@@ -1,12 +1,16 @@
 package net.neganote.monilabs.gtbridge;
 
+import brachy.modularui.utils.Alignment;
+import brachy.modularui.widgets.layout.Flow;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
+import com.gregtechceu.gtceu.api.recipe.gui.GTRecipeViewerWidget;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.common.data.GTSoundEntries;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
 import net.minecraft.network.chat.Component;
+import net.neganote.monilabs.capability.recipe.ChromaRecipeCapability;
 import net.neganote.monilabs.capability.recipe.MoniRecipeCapabilities;
 import net.neganote.monilabs.client.gui.MoniGuiTextures;
 import net.neganote.monilabs.common.data.MoniSounds;
@@ -89,7 +93,8 @@ public class MoniRecipeTypes {
             .setEUIO(IO.IN)
             .setMaxSize(IO.IN, MoniRecipeCapabilities.MICROVERSE, 1)
             .setMaxIOSize(9, 9, 3, 0)
-            .UI(builder -> builder.setItemSlotsOverlay(IO.IN, 0, 8, GTGuiTextures.ARROW_INPUT_OVERLAY)
+            .UI(builder -> builder
+                    .setItemSlotsOverlay(IO.IN, 0, 8, GTGuiTextures.ARROW_INPUT_OVERLAY)
                     .setProgressBar(MoniGuiTextures.PROGRESS_BAR_ROCKET)
                     .addRecipeUIModifier((recipe, widget) -> {
                         widget.textComponents.child(
@@ -111,12 +116,14 @@ public class MoniRecipeTypes {
                                         return Component.translatable("emi_info.monilabs.integrity_drained",
                                                 (float) (damageRate *
                                                         recipe.data.getInt("duration")) /
-                                                        MicroverseProjectorMachine.FLUX_REPAIR_AMOUNT);
+                                                        MicroverseProjectorMachine.FLUX_REPAIR_AMOUNT)
+                                                .append("%");
                                     } else {
                                         return Component.translatable("emi_info.monilabs.integrity_healed",
                                                 (float) (-damageRate *
                                                         recipe.data.getInt("duration")) /
-                                                        MicroverseProjectorMachine.FLUX_REPAIR_AMOUNT);
+                                                        MicroverseProjectorMachine.FLUX_REPAIR_AMOUNT)
+                                                .append("%");
                                     }
                                 })
                                         .asWidget()
@@ -126,7 +133,21 @@ public class MoniRecipeTypes {
                                         .asWidget()
                                         .setEnabledIf(w -> recipe.data.contains("blacklistParallel") &&
                                                 recipe.data.getBoolean("blacklistParallel")));
-                    }))
+                    })
+                    .setRecipeViewerLayoutCapabilityLayoutBuilder(MoniRecipeCapabilities.MICROVERSE, (layout, widget, io) -> {
+                        if (layout.getRecipeType().getMaxSlots(MoniRecipeCapabilities.MICROVERSE, io) == 0) return;
+                        widget.textComponents.child(Flow.col()
+                                .crossAxisAlignment(Alignment.CrossAxis.START)
+                                .coverChildrenHeight()
+                                .widthRel(1f)
+                                .name(GTRecipeViewerWidget.capabilityWidgetName(MoniRecipeCapabilities.MICROVERSE, io, 0)));
+                    })
+                    .setCapabilityContentBuilder(MoniRecipeCapabilities.MICROVERSE,
+                            (widget, content, io, perTick, recipeType, recipe, chanceTier, recipeTier) -> {
+                                if (!(widget instanceof Flow flow)) return;
+                                flow.child(Text.lang("emi_info.monilabs.required_microverse",
+                                        MoniRecipeCapabilities.MICROVERSE.of(content.content())).asWidget());
+                            }))
             .setSound(MoniSounds.MICROVERSE);
 
     public static GTRecipeType ATOMIC_RECONSTRUCTOR = GTRecipeTypes
