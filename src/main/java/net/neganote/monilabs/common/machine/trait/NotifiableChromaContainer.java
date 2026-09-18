@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
 import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableRecipeHandlerTrait;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 
+import net.minecraft.network.chat.CommonComponents;
 import net.neganote.monilabs.capability.recipe.ChromaIngredient;
 import net.neganote.monilabs.capability.recipe.MoniRecipeCapabilities;
 import net.neganote.monilabs.common.machine.multiblock.Color;
@@ -13,6 +14,7 @@ import net.neganote.monilabs.common.machine.multiblock.PrismaticCrucibleMachine;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
@@ -36,7 +38,7 @@ public class NotifiableChromaContainer extends NotifiableRecipeHandlerTrait<Chro
         ChromaIngredient recipeColor = left.get(0);
         List<Object> contents = getContents();
         if (contents.stream().anyMatch(recipeColor::equals)) {
-            return null;
+            return Collections.emptyList();
         } else {
             return left;
         }
