@@ -59,24 +59,11 @@ public class ChromaRecipeCapability extends RecipeCapability<ChromaIngredient> {
             if (key != null)
                 flow.child(Text.lang(key).asWidget());
             else if (inputColor.isTypeNotColor()) {
-                int color = 0;
-                switch (inputColor) {
-                    case NOT_RED -> color = Color.RED.integerColor;
-                    case NOT_ORANGE -> color = Color.ORANGE.integerColor;
-                    case NOT_YELLOW -> color = Color.YELLOW.integerColor;
-                    case NOT_LIME -> color = Color.LIME.integerColor;
-                    case NOT_GREEN -> color = Color.GREEN.integerColor;
-                    case NOT_TEAL -> color = Color.TEAL.integerColor;
-                    case NOT_CYAN -> color = Color.CYAN.integerColor;
-                    case NOT_AZURE -> color = Color.AZURE.integerColor;
-                    case NOT_BLUE -> color = Color.BLUE.integerColor;
-                    case NOT_INDIGO -> color = Color.INDIGO.integerColor;
-                    case NOT_MAGENTA -> color = Color.MAGENTA.integerColor;
-                    case NOT_PINK -> color = Color.PINK.integerColor;
-                }
-
-                flow.child(Text.lang("monilabs.recipe.input_color_not", Component.translatable(inputColor.nameKey))
-                        .color(color)
+                Color anticolor = Color.FROM_NOT_COLOR.get(inputColor);
+                flow.child(Text.lang("monilabs.recipe.input_color_not", Component.translatable(anticolor.nameKey))
+                        .asWidget());
+            } else {
+                flow.child(Text.lang("monilabs.recipe.mistake_input_colors")
                         .asWidget());
             }
         }
