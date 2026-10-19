@@ -1,8 +1,8 @@
 package net.neganote.monilabs.common.machine.multiblock;
 
 import com.gregtechceu.gtceu.api.GTValues;
+import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.feature.ITieredMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
@@ -13,10 +13,9 @@ import com.gregtechceu.gtceu.api.recipe.ingredient.EnergyStack;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.api.recipe.modifier.ParallelLogic;
 import com.gregtechceu.gtceu.api.recipe.modifier.RecipeModifier;
+import com.gregtechceu.gtceu.api.sync_system.annotations.SyncToClient;
 import com.gregtechceu.gtceu.common.machine.multiblock.generator.LargeCombustionEngineMachine;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
-
-import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -32,7 +31,7 @@ public class LargeLapotronicGeneratorMachine extends WorkableElectricMultiblockM
     @Getter
     private final int tier;
 
-    @DescSynced
+    @SyncToClient
     private boolean isManaBoosted = false;
     private int runningTimer = 0;
 
@@ -40,8 +39,8 @@ public class LargeLapotronicGeneratorMachine extends WorkableElectricMultiblockM
     private static final FluidStack NORMAL_MANA_STACK = MoniMaterials.Mana.getFluid(2);
     private static final FluidStack EXTREME_MANA_STACK = MoniMaterials.Mana.getFluid(5);
 
-    public LargeLapotronicGeneratorMachine(IMachineBlockEntity holder, int tier) {
-        super(holder);
+    public LargeLapotronicGeneratorMachine(BlockEntityCreationInfo info, int tier) {
+        super(info);
         this.tier = tier;
     }
 
@@ -113,11 +112,6 @@ public class LargeLapotronicGeneratorMachine extends WorkableElectricMultiblockM
                     .build();
         }
         return ModifierFunction.NULL;
-    }
-
-    @Override
-    public boolean regressWhenWaiting() {
-        return false;
     }
 
     private boolean isExtreme() {

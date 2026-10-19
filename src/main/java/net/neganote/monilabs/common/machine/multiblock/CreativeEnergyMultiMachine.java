@@ -2,16 +2,13 @@ package net.neganote.monilabs.common.machine.multiblock;
 
 import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableEnergyContainer;
+import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableEnergyContainer;
 import com.gregtechceu.gtceu.common.machine.owner.MachineOwner;
 
 import net.minecraft.server.level.ServerLevel;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;

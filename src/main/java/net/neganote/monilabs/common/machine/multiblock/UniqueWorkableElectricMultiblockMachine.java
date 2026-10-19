@@ -18,14 +18,11 @@ import brachy.modularui.value.sync.PanelSyncManager;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.*;
+import java.util.ArrayList;
 
-// Copied from CosmicCore with some major changes (thank you Caitlynn!)
+// Copied from CosmicCore with some major changes (thank you Ghostipedia!)
 public class UniqueWorkableElectricMultiblockMachine extends WorkableElectricMultiblockMachine {
-
-    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            UniqueWorkableElectricMultiblockMachine.class, WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
 
     // Map of Players -> Unique Machines they have
     public static final HashMap<UUID, HashMap<Class<?>, MetaMachine>> ACTIVE_OWNERS = new HashMap<>();
@@ -37,11 +34,6 @@ public class UniqueWorkableElectricMultiblockMachine extends WorkableElectricMul
 
     public UniqueWorkableElectricMultiblockMachine(BlockEntityCreationInfo info) {
         super(info);
-    }
-
-    @Override
-    public @NotNull ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
     }
 
     public Class<?> getMachineType() {
@@ -147,7 +139,7 @@ public class UniqueWorkableElectricMultiblockMachine extends WorkableElectricMul
 
     @Override
     public @NotNull List<IWidget> getWidgetsForDisplay(@NotNull PanelSyncManager syncManager) {
-        BooleanSyncValue isDuplicate = new BooleanSyncValue(this::isDuplicate());
+        BooleanSyncValue isDuplicate = new BooleanSyncValue(this::isDuplicate);
         syncManager.syncValue("isDuplicate", isDuplicate);
         List<IWidget> widgets = new ArrayList<>();
         widgets.add(

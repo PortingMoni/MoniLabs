@@ -2,9 +2,9 @@ package net.neganote.monilabs.common.machine.multiblock;
 
 import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 
 import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class CreativeDataMultiMachine extends UniqueWorkableElectricMultiblockMachine {

@@ -92,7 +92,7 @@ public class NotifiableEnergyContainerMixin extends NotifiableRecipeHandlerTrait
         }
     }
 
-    @Inject(method = "onMachineUnLoad", at = @At(value = "HEAD"))
+    @Inject(method = "onMachineUnload", at = @At(value = "HEAD"))
     private void monilabs$unregisterFromCreativeEnergy(CallbackInfo ci) {
         CreativeEnergyMultiMachine.unregisterEnergyContainer((NotifiableEnergyContainer) (Object) this);
     }

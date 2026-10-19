@@ -1,5 +1,6 @@
 package net.neganote.monilabs.gtbridge;
 
+import brachy.modularui.drawable.GuiTextures;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.gui.GTRecipeViewerWidget;
@@ -112,7 +113,7 @@ public class MoniRecipeTypes {
                         widget.textComponents.child(
                                 Text.lang("emi_info.monilabs.projector_info", recipe.data.getByte("projector_tier"))
                                         .asWidget())
-                                .child(Text.lang("projector.monilabs.tier." + recipe.data.getByte("projector_tier")))
+                                .child(Text.lang("projector.monilabs.tier." + recipe.data.getByte("projector_tier")).asWidget())
                                 .child(Text.dynamic(() -> {
                                     if (!recipe.data.contains("updated_microverse")) return Component.empty();
                                     return Component.translatable("emi_info.monilabs.new_microverse",
@@ -327,7 +328,8 @@ public class MoniRecipeTypes {
             .register("lapotronic", GTRecipeTypes.GENERATOR)
             .setEUIO(IO.OUT)
             .setMaxIOSize(1, 0, 0, 0)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
+            .UI(builder -> builder.setItemSlotOverlay(IO.IN, 0, GTGuiTextures.ARROW_INPUT_OVERLAY)
+                    .setProgressBar(GTGuiTextures.PROGRESS_ARROW))
             .setSound(GTSoundEntries.COMBUSTION);
 
     public static void init() {}

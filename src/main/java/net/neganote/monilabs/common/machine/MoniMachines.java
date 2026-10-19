@@ -3,12 +3,14 @@ package net.neganote.monilabs.common.machine;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
+import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.data.RotationState;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
+import com.gregtechceu.gtceu.api.machine.SimpleGeneratorMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
@@ -16,6 +18,7 @@ import com.gregtechceu.gtceu.api.machine.trait.recipe.RecipeLogic;
 import com.gregtechceu.gtceu.api.multiblock.Predicates;
 import com.gregtechceu.gtceu.api.multiblock.pattern.MultiblockPatternBuilder;
 import com.gregtechceu.gtceu.api.multiblock.util.RelativeDirection;
+import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.api.registry.registrate.MachineBuilder;
 import com.gregtechceu.gtceu.client.util.TooltipHelper;
@@ -29,6 +32,7 @@ import com.gregtechceu.gtceu.common.machine.multiblock.part.LaserHatchPartMachin
 import com.gregtechceu.gtceu.common.machine.multiblock.part.ParallelHatchPartMachine;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
+import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -646,7 +650,7 @@ public class MoniMachines {
                     .where('c', Predicates.blocks(GTBlocks.SUPERCONDUCTING_COIL.get()))
                     .where('d', Predicates.frames(MoniMaterials.Eltz))
                     .where('e', Predicates.blocks(GCYMBlocks.CASING_ATOMIC.get())
-                                            .and(Predicates.abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1)))
+                            .and(Predicates.abilities(PartAbility.IMPORT_FLUIDS).setPreviewCount(1)))
                     .where('f', Predicates.frames(GTMaterials.NaquadahAlloy))
                     .where('g', Predicates.blocks(MoniBlocks.ELTZ_CASING.get()))
                     .where('h', Predicates.frames(MoniMaterials.CrystalMatrix))
@@ -761,22 +765,24 @@ public class MoniMachines {
                     holder -> new LargeLapotronicGeneratorMachine(holder, GTValues.EV))
             .recipeTypes(MoniRecipeTypes.LAPOTRONIC_GENERATOR_RECIPES)
             .recipeModifiers(LargeLapotronicGeneratorMachine::recipeModifier)
+            .regressWhenWaiting(false)
             .appearanceBlock(GTBlocks.CASING_TITANIUM_STABLE)
-            .pattern(definition -> FactoryBlockPattern.start()
-                    .aisle("EBE", "FCF", "EBE")
-                    .aisle("EBE", "EDE", "EBE")
-                    .aisle("EBE", "EDE", "EBE")
-                    .aisle("EBE", "F@F", "EBE")
-                    .where("@", Predicates.controller(Predicates.blocks(definition.get())))
-                    .where("B", Predicates.blocks(GTBlocks.CASING_TITANIUM_STABLE.get())
+            .pattern(definition -> MultiblockPatternBuilder
+                    .start(RelativeDirection.FRONT, RelativeDirection.UP, RelativeDirection.RIGHT)
+                    .slice("EBE", "FCF", "EBE")
+                    .slice("EBE", "EDE", "EBE")
+                    .slice("EBE", "EDE", "EBE")
+                    .slice("EBE", "F@F", "EBE")
+                    .where('@', Predicates.controller(Predicates.blocks(definition.get())))
+                    .where('B', Predicates.blocks(GTBlocks.CASING_TITANIUM_STABLE.get())
                             .or(Predicates.autoAbilities(definition.getRecipeTypes(), false, false, true, true, true,
                                     true))
                             .or(Predicates.autoAbilities(true, false, false))
                             .or(Predicates.abilities(PartAbility.IMPORT_FLUIDS)))
-                    .where("C", Predicates.abilities(PartAbility.OUTPUT_ENERGY))
-                    .where("D", Predicates.blocks(GTBlocks.CASING_TITANIUM_GEARBOX.get()))
-                    .where("E", Predicates.blocks(MoniBlocks.ENERGETIC_TITANIUM_CASING.get()))
-                    .where("F", Predicates.frames(GTMaterials.Titanium))
+                    .where('C', Predicates.abilities(PartAbility.OUTPUT_ENERGY))
+                    .where('D', Predicates.blocks(GTBlocks.CASING_TITANIUM_GEARBOX.get()))
+                    .where('E', Predicates.blocks(MoniBlocks.ENERGETIC_TITANIUM_CASING.get()))
+                    .where('F', Predicates.frames(GTMaterials.Titanium))
                     .build())
             .workableCasingModel(GTCEu.id("block/casings/solid/machine_casing_stable_titanium"),
                     GTCEu.id("block/multiblock/generator/large_combustion_engine"))
@@ -792,21 +798,22 @@ public class MoniMachines {
             .recipeTypes(MoniRecipeTypes.LAPOTRONIC_GENERATOR_RECIPES)
             .recipeModifiers(LargeLapotronicGeneratorMachine::recipeModifier) // Here too
             .appearanceBlock(GTBlocks.CASING_TUNGSTENSTEEL_ROBUST)
-            .pattern(definition -> FactoryBlockPattern.start()
-                    .aisle("EBE", "FCF", "EBE")
-                    .aisle("EBE", "EDE", "EBE")
-                    .aisle("EBE", "EDE", "EBE")
-                    .aisle("EBE", "F@F", "EBE")
-                    .where("@", Predicates.controller(Predicates.blocks(definition.get())))
-                    .where("B", Predicates.blocks(GTBlocks.CASING_TUNGSTENSTEEL_ROBUST.get())
+            .pattern(definition -> MultiblockPatternBuilder
+                    .start(RelativeDirection.FRONT, RelativeDirection.UP, RelativeDirection.RIGHT)
+                    .slice("EBE", "FCF", "EBE")
+                    .slice("EBE", "EDE", "EBE")
+                    .slice("EBE", "EDE", "EBE")
+                    .slice("EBE", "F@F", "EBE")
+                    .where('@', Predicates.controller(Predicates.blocks(definition.get())))
+                    .where('B', Predicates.blocks(GTBlocks.CASING_TUNGSTENSTEEL_ROBUST.get())
                             .or(Predicates.autoAbilities(definition.getRecipeTypes(), false, false, true, true, true,
                                     true))
                             .or(Predicates.autoAbilities(true, false, false))
                             .or(Predicates.abilities(PartAbility.IMPORT_FLUIDS)))
-                    .where("C", Predicates.abilities(PartAbility.OUTPUT_ENERGY))
-                    .where("D", Predicates.blocks(GTBlocks.CASING_TUNGSTENSTEEL_GEARBOX.get()))
-                    .where("E", Predicates.blocks(MoniBlocks.LAPOTRONIC_TUNGSTENSTEEL_CASING.get()))
-                    .where("F", Predicates.frames(GTMaterials.TungstenSteel))
+                    .where('C', Predicates.abilities(PartAbility.OUTPUT_ENERGY))
+                    .where('D', Predicates.blocks(GTBlocks.CASING_TUNGSTENSTEEL_GEARBOX.get()))
+                    .where('E', Predicates.blocks(MoniBlocks.LAPOTRONIC_TUNGSTENSTEEL_CASING.get()))
+                    .where('F', Predicates.frames(GTMaterials.TungstenSteel))
                     .build())
             .workableCasingModel(GTCEu.id("block/casings/solid/machine_casing_robust_tungstensteel"),
                     GTCEu.id("block/multiblock/generator/large_combustion_engine"))
@@ -883,8 +890,6 @@ public class MoniMachines {
                 (tier, builder) -> builder
                         .langValue("%s %s Generator %s".formatted(GTValues.VLVH[tier],
                                 FormattingUtil.toEnglishName(name), GTValues.VLVT[tier]))
-                        .editableUI(SimpleGeneratorMachine.EDITABLE_UI_CREATOR.apply(GTCEu.id(name),
-                                recipeType))
                         .rotationState(RotationState.ALL).recipeType(recipeType)
                         .recipeModifier(SimpleGeneratorMachine::recipeModifier, true)
                         .addOutputLimit(ItemRecipeCapability.CAP, 0).addOutputLimit(FluidRecipeCapability.CAP, 0)

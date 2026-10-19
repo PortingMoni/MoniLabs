@@ -8,14 +8,14 @@
   "loader": "gtceu:machine",
   "machine": "monilabs:creative_energy_multi",
   "texture_overrides": {
-    "all": "monilabs:block/casing/netherite"
+    "all": "gtceu:block/casings/gcym/atomic_casing"
   },
   "variants": {
     "recipe_logic_status=idle": {
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "monilabs:block/casing/netherite"
+          "all": "gtceu:block/casings/gcym/atomic_casing"
         }
       }
     },
@@ -23,7 +23,7 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "monilabs:block/casing/netherite"
+          "all": "gtceu:block/casings/gcym/atomic_casing"
         }
       }
     },
@@ -31,7 +31,7 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "monilabs:block/casing/netherite"
+          "all": "gtceu:block/casings/gcym/atomic_casing"
         }
       }
     },
@@ -39,7 +39,7 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "monilabs:block/casing/netherite"
+          "all": "gtceu:block/casings/gcym/atomic_casing"
         }
       }
     }
