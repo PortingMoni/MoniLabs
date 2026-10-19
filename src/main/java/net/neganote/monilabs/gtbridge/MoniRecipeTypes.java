@@ -112,6 +112,7 @@ public class MoniRecipeTypes {
                         widget.textComponents.child(
                                 Text.lang("emi_info.monilabs.projector_info", recipe.data.getByte("projector_tier"))
                                         .asWidget())
+                                .child(Text.lang("projector.monilabs.tier." + recipe.data.getByte("projector_tier")))
                                 .child(Text.dynamic(() -> {
                                     if (!recipe.data.contains("updated_microverse")) return Component.empty();
                                     return Component.translatable("emi_info.monilabs.new_microverse",
@@ -321,6 +322,13 @@ public class MoniRecipeTypes {
             .UI(builder -> builder.setItemSlotOverlay(IO.IN, 0, GTGuiTextures.ARROW_INPUT_OVERLAY)
                     .setProgressBar(GTGuiTextures.PROGRESS_ARROW))
             .setSound(GTSoundEntries.CHEMICAL);
+
+    public static GTRecipeType LAPOTRONIC_GENERATOR_RECIPES = GTRecipeTypes
+            .register("lapotronic", GTRecipeTypes.GENERATOR)
+            .setEUIO(IO.OUT)
+            .setMaxIOSize(1, 0, 0, 0)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.COMBUSTION);
 
     public static void init() {}
 }

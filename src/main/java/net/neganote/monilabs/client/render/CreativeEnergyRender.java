@@ -59,10 +59,10 @@ public class CreativeEnergyRender extends DynamicRender<CreativeEnergyMultiMachi
         float translateZ = 0.5f;
 
         Direction back = front.getOpposite();
-        Vec3i backVec = back.getNormal().multiply(6);
+        Vec3i backVec = back.getNormal().multiply(3);
         Vec3i upVec = upwards.getNormal().multiply(13);
 
-        Vec3i bhPos = machine.getBlockPos().relative(back, 6).relative(upwards, 13);
+        Vec3i bhPos = machine.getBlockPos().relative(back, 3).relative(upwards, 13);
         translateX += backVec.getX() + upVec.getX();
         translateY += backVec.getY() + upVec.getY();
         translateZ += backVec.getZ() + upVec.getZ();
@@ -94,11 +94,11 @@ public class CreativeEnergyRender extends DynamicRender<CreativeEnergyMultiMachi
 
     @Override
     public int getViewDistance() {
-        return 128;
+        return 256;
     }
 
     @Override
     public AABB getRenderBoundingBox(CreativeEnergyMultiMachine machine) {
-        return new AABB(machine.getBlockPos()).inflate(getViewDistance(), getViewDistance() + 32, getViewDistance());
+        return new AABB(machine.getBlockPos()).inflate(getViewDistance(), getViewDistance() + 64.0, getViewDistance());
     }
 }

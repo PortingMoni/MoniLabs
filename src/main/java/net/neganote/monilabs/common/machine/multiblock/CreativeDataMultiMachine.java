@@ -2,70 +2,61 @@ package net.neganote.monilabs.common.machine.multiblock;
 
 import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
+import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 
 import net.minecraft.server.level.ServerLevel;
-import net.neganote.monilabs.saveddata.CreativeDataAccessSavedData;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class CreativeDataMultiMachine extends UniqueWorkableElectricMultiblockMachine {
 
-    private final ConditionalSubscriptionHandler creativeDataSubscription;
+    public boolean isProviding = false;
+
+    private final ConditionalSubscriptionHandler creativeSubscription;
 
     public CreativeDataMultiMachine(BlockEntityCreationInfo info) {
         super(info);
+        this.creativeSubscription = new ConditionalSubscriptionHandler(this, this::tickSync, this::isFormed);
+    }
 
-        this.creativeDataSubscription = new ConditionalSubscriptionHandler(this, this::tickEnableCreativeData,
-                this::isSubscriptionActive);
+    private void tickSync() {
+        syncCreativeData(!isDuplicate() && isWorkingEnabled() && recipeLogic.isWorking());
+    }
+
+    @Override
+    public Class<?> getMachineType() {
+        return CreativeDataMultiMachine.class;
     }
 
     @Override
     public void formStructure(@NotNull String substructureName) {
         super.formStructure(substructureName);
-        creativeDataSubscription.updateSubscription();
+        creativeSubscription.updateSubscription();
+        tickSync();
     }
 
-    public void enableCreativeData(boolean enabled) {
-        UUID ownerUUID = getOwnerUUID();
-        if (ownerUUID == null) {
-            ownerUUID = new UUID(0L, 0L);
-        }
-        if (getLevel() instanceof ServerLevel serverLevel) {
-            CreativeDataAccessSavedData savedData = CreativeDataAccessSavedData
-                    .getOrCreate(serverLevel.getServer().overworld());
-            savedData.setEnabled(ownerUUID, enabled);
-        }
+    public void syncCreativeData(boolean active) {
+        if (!(getLevel() instanceof ServerLevel)) return;
+        if (active == this.isProviding) return;
+        this.isProviding = active;
     }
 
     @Override
     public void onUnload() {
         super.onUnload();
-        enableCreativeData(false);
-    }
-
-    private void tickEnableCreativeData() {
-        enableCreativeData(recipeLogic.isWorking());
-    }
-
-    private Boolean isSubscriptionActive() {
-        return isFormed();
+        creativeSubscription.unsubscribe();
+        syncCreativeData(false);
     }
 
     @Override
     public void setWorkingEnabled(boolean isWorkingAllowed) {
         super.setWorkingEnabled(isWorkingAllowed);
-        if (!isWorkingAllowed) {
-            enableCreativeData(false);
-        }
+        syncCreativeData(!isDuplicate() && isWorkingEnabled() && recipeLogic.isWorking());
     }
 
     @Override
     public void invalidateStructure(@NotNull String name) {
         super.invalidateStructure(name);
-        enableCreativeData(false);
-        creativeDataSubscription.unsubscribe();
+        creativeSubscription.unsubscribe();
+        syncCreativeData(false);
     }
 }
