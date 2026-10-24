@@ -1,6 +1,4 @@
-# Moni Labs 0.21.8
+# Moni Labs 0.24.1
 
-* Fix rare error from the TES shader asking for a texture slot it can't get (thanks JenyaRostov)
-* Add auto-complete card support for extended pattern providers (thanks tamer bayar)
-* Add internal static var for an overclocks-as-parallels recipe modifier
-* Make microverse projector renders more colorful, based on the microverse type (thanks JenyaRostov)
+* Fix an extra superconducting coil in the TES structure, make sure there's a minimum amount of atomic casings
+* Add and refine tooltips for lapogens, also add lang for lapotronic generator recipe type

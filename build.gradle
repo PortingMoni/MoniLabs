@@ -225,7 +225,7 @@ dependencies {
 
     // GregTech and dependencies
     modImplementation("com.gregtechceu.gtceu:gtceu-${minecraft_version}:${gtceu_version}:slim") { transitive = false }
-    modImplementation("brachy.modularui:modularui-mc${minecraft_version}:${mui_version}:slim") { transitive = false }
+    modImplementation("brachy.modularui:modularui-mc${minecraft_version}:${mui_version}") { transitive = false }
     modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
     modImplementation("dev.latvian.mods:kubejs-forge:${kubejs_version}")
     modImplementation("dev.latvian.mods:rhino-forge:${rhino_version}")
@@ -257,6 +257,9 @@ dependencies {
     modCompileOnly("maven.modrinth:advancedae:${aae_version}")
 
     modCompileOnly("curse.maven:ex-pattern-provider-892005:8291632")
+
+    modCompileOnly("maven.modrinth:easy-anvils:v8.0.2-1.20.1-Forge")
+
 }
 
 tasks.named('processResources', ProcessResources).configure {

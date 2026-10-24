@@ -57,6 +57,7 @@ import net.neganote.monilabs.data.MoniDataGen;
 import net.neganote.monilabs.gtbridge.MoniRecipeTypes;
 import net.neganote.monilabs.integration.fancymenu.ActionRegister;
 import net.neganote.monilabs.integration.kjs.recipe.MoniRecipeComponents;
+import net.neganote.monilabs.packmode.XpCostSync;
 import net.neganote.monilabs.utils.CalendarUtil;
 
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -92,6 +93,7 @@ public class MoniLabs {
     }
 
     public MoniLabs(FMLJavaModLoadingContext context) {
+        XpCostSync.register();
         MoniLabs.init();
         IEventBus modEventBus = context.getModEventBus();
 

@@ -1,0 +1,21 @@
+package net.neganote.monilabs.mixin.gt;
+
+import com.gregtechceu.gtceu.common.machine.multiblock.generator.LargeTurbineMachine;
+
+import org.spongepowered.asm.mixin.Mixin;
+
+@Mixin(value = LargeTurbineMachine.class, remap = false)
+public class LargeTurbineMachineMixin {
+
+    // TODO: when LargeTubrineMachineDisplayWidgets is ported, add this back in.
+    /*
+     * @Inject(method = "addDisplayText(Ljava/util/List;)V",
+     * at = @At(value = "INVOKE",
+     * target =
+     * "Lcom/gregtechceu/gtceu/api/machine/feature/multiblock/IRotorHolderMachine;getRotorDurabilityPercent()I"),
+     * cancellable = true)
+     * public void monilabs$displayText(List<Component> textList, CallbackInfo ci) {
+     * ci.cancel();
+     * }
+     */
+}

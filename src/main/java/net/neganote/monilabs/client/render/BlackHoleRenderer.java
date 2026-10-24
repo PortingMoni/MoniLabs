@@ -42,7 +42,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class BlackHoleRenderer {
 
     public static RenderTarget miscTranslucentTexture = null;
-    private static final int uAABBSize = 14;
+    private static final int uAABBSize = 21;
     private static final List<Vector3f> blackHoles = new ArrayList<>();
     private static final Matrix4f projectionMatrix = new Matrix4f();
     private static final Matrix4f viewMatrix = new Matrix4f();
