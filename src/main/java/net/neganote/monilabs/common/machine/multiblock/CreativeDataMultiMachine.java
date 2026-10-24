@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
 
 import net.minecraft.server.level.ServerLevel;
+
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
