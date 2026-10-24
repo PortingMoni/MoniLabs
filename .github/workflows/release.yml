@@ -12,6 +12,11 @@ on:
           - "alpha"
           - "beta"
           - "release"
+      ignore_spotless:
+        description: 'Ignore spotlessCheck when building the project'
+        default: false
+        required: false
+        type: boolean
 
 permissions:
   contents: write
@@ -47,7 +52,7 @@ jobs:
           properties: "mod_version"
 
       - name: Build Project
-        run: ./gradlew build --build-cache
+        run: ./gradlew build --build-cache ${{ inputs.ignore_spotless && '-x spotlessCheck' || '' }}
 
       - name: Upload Forge Releases (Curse|Modrinth|Github)
         id: forge_release

@@ -1,4 +1,4 @@
-# Moni Labs 0.24.0
+# Moni Labs 0.24.1
 
-* Change the structure of the TES to be vastly larger (31x31 instead of 15x15) and made the black hole render larger
-* Added tooltips to the lapotronic generator multiblocks
+* Fix an extra superconducting coil in the TES structure, make sure there's a minimum amount of atomic casings
+* Add and refine tooltips for lapogens, also add lang for lapotronic generator recipe type
